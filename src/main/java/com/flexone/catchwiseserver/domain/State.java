@@ -40,11 +40,11 @@ public class State {
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinTable(
-          name = "state_geo_location",
+          name = "state_geo_locations",
           joinColumns = @JoinColumn(name = "state_id"),
           inverseJoinColumns = @JoinColumn(name = "geo_location_id")
           )
-  GeoLocation geoLocation;
+  private GeoLocation geoLocation;
 
   public State addCounties(List<County> countyList) {
     this.counties.addAll(countyList);

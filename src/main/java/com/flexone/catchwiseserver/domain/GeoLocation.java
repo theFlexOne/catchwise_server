@@ -10,14 +10,16 @@ import org.locationtech.jts.geom.Geometry;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
+@Table(name = "geo_locations")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class GeoLocation {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(columnDefinition = "GEOMETRY", name = "geometry")
+  @Column(columnDefinition = "GEOMETRY", name = "geom")
   private Geometry geometry;
   @Column(length = 1000, name = "properties")
-  private String properties;
+  private String properties = "{}";
 }

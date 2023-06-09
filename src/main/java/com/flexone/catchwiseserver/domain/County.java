@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
+@Table(name = "counties")
 public class County {
 
   @Id
@@ -31,7 +32,7 @@ public class County {
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinTable(
-          name = "county_geo_location",
+          name = "county_geo_locations",
           joinColumns = @JoinColumn(name = "county_id"),
           inverseJoinColumns = @JoinColumn(name = "geo_location_id")
   )

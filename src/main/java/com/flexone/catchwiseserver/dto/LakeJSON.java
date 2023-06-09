@@ -3,6 +3,7 @@ package com.flexone.catchwiseserver.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.Coordinates;
 
@@ -12,21 +13,22 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@RequiredArgsConstructor
 public class LakeJSON {
 
   String name;
   String countyFips;
   String localId;
   String nearestTown;
-  LatLng latLng;
+  LatLng coordinates;
 
   @JsonProperty("fish")
   List<FishSpecies> fishSpecies;
 
   List<Component> components;
 
-@Data
-private static class LatLng {
+  @Data
+  public static class LatLng {
     @JsonProperty("latitude")
     double lat;
     @JsonProperty("longitude")
@@ -43,7 +45,7 @@ private static class LatLng {
   private static class Component {
     String localId;
     String name;
-    Coordinates coordinates;
+    LatLng coordinates;
 
     @JsonProperty("fish")
     List<FishSpecies> fishSpecies;
