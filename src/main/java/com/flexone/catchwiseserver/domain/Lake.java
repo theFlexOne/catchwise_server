@@ -1,12 +1,20 @@
 package com.flexone.catchwiseserver.domain;
 
 
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -31,14 +39,16 @@ public class Lake {
   @Column(name = "nearest_town")
   private String nearestTown;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
+  @JsonSerialize(using = GeometrySerializer.class, as = Point.class)
+  @JsonDeserialize(using = GeometryDeserializer.class)
+  private Point geometry;
+
+  @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   @JoinTable(
-          name = "lake_geo_locations",
+          name = "lakes_fish_species",
           joinColumns = @JoinColumn(name = "lake_id"),
-          inverseJoinColumns = @JoinColumn(name = "geo_location_id")
-  )
-  private GeoLocation geoLocation;
-
-
+          inverseJoinColumns = @JoinColumn(name = "fish_species_id"))
+  private List<FishSpecies> fishSpecies = new ArrayList<>();
 
 }

@@ -5,6 +5,8 @@ import com.flexone.catchwiseserver.repository.LakeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LakeService {
@@ -17,5 +19,11 @@ public class LakeService {
   public void saveAll(Iterable<Lake> lakes) {
     lakeRepository.saveAll(lakes);
   }
+  public List<Lake> findAllLakesInState(String stateName) {
+    return lakeRepository.findAllLakesInState(stateName);
+  }
 
+  public List<Lake> findAllLakesWithinDistance(double lon, double lat, int distance) {
+    return lakeRepository.findAllLakesWithinDistance(lon, lat, distance);
+  }
 }

@@ -1,9 +1,18 @@
 package com.flexone.catchwiseserver.domain;
 
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -29,12 +38,8 @@ public class County {
   @JoinColumn(name = "state_id", nullable = false)
   private State state;
 
-
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinTable(
-          name = "county_geo_locations",
-          joinColumns = @JoinColumn(name = "county_id"),
-          inverseJoinColumns = @JoinColumn(name = "geo_location_id")
-  )
-  GeoLocation geoLocation;
+  @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
+  @JsonSerialize(using = GeometrySerializer.class)
+  @JsonDeserialize(using = GeometryDeserializer.class)
+  private MultiPolygon geometry;
 }

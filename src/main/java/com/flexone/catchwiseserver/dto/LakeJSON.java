@@ -36,7 +36,7 @@ public class LakeJSON {
   }
 
   @Data
-  private static class FishSpecies {
+  public static class FishSpecies {
     String name;
     String species;
   }

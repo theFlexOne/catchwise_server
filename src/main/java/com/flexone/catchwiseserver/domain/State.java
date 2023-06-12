@@ -1,9 +1,17 @@
 package com.flexone.catchwiseserver.domain;
 
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +44,13 @@ public class State {
           cascade = CascadeType.ALL,
           orphanRemoval = true
   )
+  @JsonIgnore
   private List<County> counties = new ArrayList<>();
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinTable(
-          name = "state_geo_locations",
-          joinColumns = @JoinColumn(name = "state_id"),
-          inverseJoinColumns = @JoinColumn(name = "geo_location_id")
-          )
-  private GeoLocation geoLocation;
+  @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
+  @JsonSerialize(using = GeometrySerializer.class)
+  @JsonDeserialize(using = GeometryDeserializer.class)
+  private MultiPolygon geometry;
 
   public State addCounties(List<County> countyList) {
     this.counties.addAll(countyList);
