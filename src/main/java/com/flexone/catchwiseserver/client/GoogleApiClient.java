@@ -15,56 +15,78 @@ import org.springframework.web.client.RestTemplate;
 public class GoogleApiClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String apiUrl = "https://maps.googleapis.com/maps/api";
+    final String placesSearchUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext";
+    final String placesDetailsUrl = "https://maps.googleapis.com/maps/api/place/details";
+    final String placesPhotoUrl = "https://maps.googleapis.com/maps/api/place/photo";
+    final String elevationUrl = "https://maps.googleapis.com/maps/api/elevation";
+    final String reverseGeocodeUrl = "https://maps.googleapis.com/maps/api/geocode";
 
     @Value("${google.api.key}")
     String googleApiKey;
 
-
-    public GoogleApiJSON getPlaceSearch(String query, String fields, String inputType, String output) {
-        String placesSearchUrl = apiUrl + "/place/findplacefromtext";
+    public Object useGooglePlaceSearchApi(String query, String[] fields, String inputType, String output) {
         inputType = inputType == null ? "textquery" : inputType;
         output = output == null ? "json" : output;
-        fields = fields.length() == 0 ? "name,place_id" : fields;
+        fields = fields.length == 0 ? new String[]{"name", "place_id"} : fields;
         String url = placesSearchUrl +
                 "/" + output +
                 "?input=" + query +
                 "&inputtype=" + inputType +
-                "&fields=" + fields +
+                "&fields=" + String.join(",", fields) +
                 "&key=" + googleApiKey;
 
-        ResponseEntity<GoogleApiJSON> response = restTemplate.getForEntity(url, GoogleApiJSON.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info(response.getBody().toString());
-            return response.getBody();
-        }
-        return null;
-    }
-    public Object getPlaceSearch(String query, String fields, String inputType) {
-        return getPlaceSearch(query, fields, inputType, null);
+        return restTemplate.getForObject(url, Object.class);
     }
 
-    public GoogleApiJSON getPlaceDetails(String placeId, String fields, String output) {
-        String placesDetailsUrl = apiUrl + "/place/details";
+    public Object useGooglePlaceDetailsApi(String placeId, String output, String[] fields) {
         output = output == null ? "json" : output;
-        fields = fields == null || fields.length() == 0 ? "name, place_id" : fields;
+        fields = fields == null || fields.length == 0 ? new String[]{"name", "place_id"} : fields;
         String url = placesDetailsUrl +
                 "/" + output +
                 "?place_id=" + placeId +
-                "&fields=" + fields +
+                "&fields=" + String.join(",", fields) +
                 "&key=" + googleApiKey;
 
-        ResponseEntity<GoogleApiJSON> response = restTemplate.getForEntity(url, GoogleApiJSON.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info(response.getBody().toString());
-            return response.getBody();
-        }
-        return null;
-    }
-    public Object getPlaceDetails(String placeId, String fields) {
-        return getPlaceDetails(placeId, fields, null);
+        return restTemplate.getForObject(url, Object.class);
     }
 
+    public byte[] useGooglePlacePhotoApi(String photoReference, String maxwidth, String maxheight) {
+        maxwidth = maxwidth == null ? "400" : maxwidth;
+
+        String url = placesPhotoUrl +
+                "?photo_reference=" + photoReference +
+                "&maxwidth=" + maxwidth +
+                "&key=" + googleApiKey;
+
+        // fetch the photo from Google and respond with the byte array
+        return restTemplate.getForObject(url, byte[].class);
+    }
+
+    public Object useGoogleElevationApi(String locations, String output) {
+        output = output == null ? "json" : output;
+        String url = elevationUrl +
+                "/" + output +
+                "?locations=" + locations +
+                "&key=" + googleApiKey;
+
+        return restTemplate.getForObject(url, Object.class);
+    }
+    public Object useGoogleElevationApi(String locations) {
+        return useGoogleElevationApi(locations, "json");
+    }
+
+    public Object useGoogleReverseGeocodeApi(String locations, String output) {
+        String url = reverseGeocodeUrl +
+                "/" + output +
+                "?latlng=" + locations +
+                "&location_type=GEOMETRIC_CENTER" +
+                "&key=" + googleApiKey;
+
+        return restTemplate.getForObject(url, Object.class);
+    }
+    public Object useGoogleReverseGeocodeApi(String locations) {
+        return useGoogleReverseGeocodeApi(locations, "json");
+    }
 
 
 }
