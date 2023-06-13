@@ -2,6 +2,8 @@ package com.flexone.catchwiseserver.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class FishSpeciesJSON {
     private String name;
@@ -9,5 +11,5 @@ public class FishSpeciesJSON {
     private String species;
     private String description;
     private String identification;
-    private String[] commonNames;
+    private List<String> commonNames;
 }

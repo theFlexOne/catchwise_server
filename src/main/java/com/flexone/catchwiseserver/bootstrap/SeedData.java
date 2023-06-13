@@ -42,20 +42,20 @@ public class SeedData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws IOException {
-        log.info("Loading seed data...");
-        try {
-            seedStatesAndCounties(
-                    "src/main/resources/data/US_States.geojson",
-                    "src/main/resources/data/US_Counties.geojson"
-            );
-            seedFishSpecies("src/main/resources/data/Fish_Species_Data.json");
-            seedLakes("src/main/resources/data/MN_Lakes_Local_Data.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.info("**SEEDING FAILED**");
-            return;
-        }
-        log.info("Finished loading seed data.");
+//        log.info("Loading seed data...");
+//        try {
+//            seedStatesAndCounties(
+//                    "src/main/resources/data/US_States.geojson",
+//                    "src/main/resources/data/US_Counties.geojson"
+//            );
+//            seedFishSpecies("src/main/resources/data/Fish_Species_Data.json");
+//            seedLakes("src/main/resources/data/MN_Lakes_Local_Data.json");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            log.info("**SEEDING FAILED**");
+//            return;
+//        }
+//        log.info("Finished loading seed data.");
     }
 
     private void seedStatesAndCounties(String statesPath, String countiesPath) throws IOException {

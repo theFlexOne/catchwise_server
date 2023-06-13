@@ -1,14 +1,13 @@
 package com.flexone.catchwiseserver.client;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.flexone.catchwiseserver.dto.GoogleApiJSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URL;
 
 @RequiredArgsConstructor
 @Component
@@ -22,11 +21,11 @@ public class GoogleApiClient {
     String googleApiKey;
 
 
-    public JSONPObject getPlaceSearch(String query, String[] fields, String inputType, String output) {
+    public GoogleApiJSON getPlaceSearch(String query, String fields, String inputType, String output) {
         String placesSearchUrl = apiUrl + "/place/findplacefromtext";
         inputType = inputType == null ? "textquery" : inputType;
         output = output == null ? "json" : output;
-        fields = fields.length == 0 ? new String[]{"name", "place_id"} : fields;
+        fields = fields.length() == 0 ? "name,place_id" : fields;
         String url = placesSearchUrl +
                 "/" + output +
                 "?input=" + query +
@@ -34,15 +33,18 @@ public class GoogleApiClient {
                 "&fields=" + fields +
                 "&key=" + googleApiKey;
 
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        log.info(response.getStatusCode().toString());
-        return new JSONPObject("callback", response.getBody());
+        ResponseEntity<GoogleApiJSON> response = restTemplate.getForEntity(url, GoogleApiJSON.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info(response.getBody().toString());
+            return response.getBody();
+        }
+        return null;
     }
-    public Object getPlaceSearch(String query, String[] fields, String inputType) {
+    public Object getPlaceSearch(String query, String fields, String inputType) {
         return getPlaceSearch(query, fields, inputType, null);
     }
 
-    public Object getPlaceDetails(String placeId, String fields, String output) {
+    public GoogleApiJSON getPlaceDetails(String placeId, String fields, String output) {
         String placesDetailsUrl = apiUrl + "/place/details";
         output = output == null ? "json" : output;
         fields = fields == null || fields.length() == 0 ? "name, place_id" : fields;
@@ -52,7 +54,12 @@ public class GoogleApiClient {
                 "&fields=" + fields +
                 "&key=" + googleApiKey;
 
-        return restTemplate.getForObject(url, Object.class);
+        ResponseEntity<GoogleApiJSON> response = restTemplate.getForEntity(url, GoogleApiJSON.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info(response.getBody().toString());
+            return response.getBody();
+        }
+        return null;
     }
     public Object getPlaceDetails(String placeId, String fields) {
         return getPlaceDetails(placeId, fields, null);

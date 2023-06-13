@@ -1,7 +1,9 @@
 package com.flexone.catchwiseserver.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.flexone.catchwiseserver.client.GoogleApiClient;
+import com.flexone.catchwiseserver.dto.GoogleApiJSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,10 +34,10 @@ public class GoogleApiController {
             @RequestParam String query,
             @RequestParam(required = false, name = "inputtype") String inputType,
             @RequestParam(required = false) String output,
-            @RequestParam(required = false) String... fields
+            @RequestParam(required = false) String fields
     ) {
-        JSONPObject response = googleApiClient.getPlaceSearch(query, fields, inputType, output);
-        return ResponseEntity.ok(response);
+        GoogleApiJSON response = googleApiClient.getPlaceSearch(query, fields, inputType, output);
+        return ResponseEntity.ok(response.getCandidates());
     }
 
     @GetMapping("/place/details")
@@ -44,8 +46,8 @@ public class GoogleApiController {
             @RequestParam(required = false) String output,
             @RequestParam(required = false) String fields
     ) {
-        Object response = googleApiClient.getPlaceDetails(placeId, fields, output);
-        return ResponseEntity.ok(response);
+        GoogleApiJSON response = googleApiClient.getPlaceDetails(placeId, fields, output);
+        return ResponseEntity.ok(response.getCandidates());
     }
 
 //    @GetMapping("/place/photo")

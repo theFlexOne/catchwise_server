@@ -1,8 +1,10 @@
 package com.flexone.catchwiseserver.domain;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -34,7 +36,7 @@ public class FishSpecies {
 
     @ElementCollection
     @CollectionTable(name = "other_fish_species_names", joinColumns = @JoinColumn(name = "fish_species_id"))
-    private String[] otherNames;
+    private List<String> otherNames;
 
     public String getScientificName() {
         return this.genus + " " + this.species;
