@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.Point;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Table(name = "lakes")
-public class Lake implements Serializable {
+public class Lake {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +40,6 @@ public class Lake implements Serializable {
   private String nearestTown;
 
   @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
-  @JsonSerialize(using = GeometrySerializer.class, as = Point.class)
-  @JsonDeserialize(using = GeometryDeserializer.class)
   private Point geometry;
 
   @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)

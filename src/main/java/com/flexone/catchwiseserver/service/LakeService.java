@@ -35,4 +35,7 @@ public class LakeService {
     }
 
 
+    public Lake findLakeById(Long id) {
+        return lakeRepository.findById(id).orElseThrow(() -> new RuntimeException("Lake not found"));
+    }
 }
