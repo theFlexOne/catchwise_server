@@ -1,26 +1,36 @@
 package com.flexone.catchwiseserver.dto;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
-import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 
 @Data
+@NoArgsConstructor
 @Accessors(chain = true)
 public class LakeResponse {
 
-
     private Long id;
     private String name;
-    @JsonSerialize(using = GeometrySerializer.class, as = String.class, converter = Geometry.class)
-    private Point geometry;
+    private Coordinates coordinates = new Coordinates(0.0, 0.0);
+
+    public LakeResponse setCoordinates(Double[] coordinates) {
+        this.coordinates.setLatitude(coordinates[0]);
+        this.coordinates.setLongitude(coordinates[1]);
+        return this;
+    }
+
+}
+
+@Data
+@Accessors(chain = true)
+class Coordinates {
+    private Double latitude;
+    private Double longitude;
+
+    public Coordinates(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
 }

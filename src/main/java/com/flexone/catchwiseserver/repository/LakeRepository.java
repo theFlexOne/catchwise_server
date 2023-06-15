@@ -16,6 +16,8 @@ public interface LakeRepository  extends JpaRepository<Lake, Long> {
     List<Lake> findAllLakesWithinDistance(@Param("lng") double lng, @Param("lat") double lat, @Param("distance") double distance);
 
 
+    @Query(value = "SELECT * FROM lakes as l WHERE ST_DWithin(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography, :range);", nativeQuery = true)
+    List<Lake> findLakesInRange(Double lat, Double lng, Integer range);
 }
 
 

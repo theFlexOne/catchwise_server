@@ -30,30 +30,53 @@ public class LakeController {
         Lake lake = lakeService.findLakeById(id);
         log.info("Returning lake {}", lake.getName());
         log.info("Returning lake {}", lake.getGeometry());
-        LakeResponse lakeResponse = new LakeResponse()
-                .setId(lake.getId())
-                .setName(lake.getName())
-                .setGeometry(lake.getGeometry());
-        return new ResponseEntity<>(lakeResponse, HttpStatus.ACCEPTED);
+        LakeResponse lakeResponse = mapLakeToLakeResponse(lake);
+        return ResponseEntity.ok(lakeResponse);
     }
 
     @GetMapping
-    public ResponseEntity<List<LakeResponse>> getAllLakes() throws Exception {
+    public ResponseEntity<List<LakeResponse>> getAllLakes() {
         List<Lake> lakes = lakeService.findAllLakes();
         log.info("Returning {} lakes", lakes.size());
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        List<LakeResponse> lakeResponses = lakes.stream()
+                .map(lake -> {
+                    try {
+                        return mapLakeToLakeResponse(lake);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(lakeResponses);
     }
 
-    @GetMapping("/within")
-    public ResponseEntity<List<Lake>> getLakesInState(@RequestParam("state") String stateName) throws Exception {
-        return ResponseEntity.ok(lakeService.findAllLakesInState(stateName));
+    @GetMapping("/in-range")
+    public ResponseEntity<List<LakeResponse>> getLakesInRange(
+            @RequestParam("lat") Double lat,
+            @RequestParam("lng") Double lng,
+            @RequestParam("range") Integer range
+    ) {
+        List<Lake> lakes = lakeService.findLakesInRange(lat, lng, range);
+        log.info("Returning {} lakes", lakes.size());
+        List<LakeResponse> lakeResponses = lakes.stream()
+                .map(lake -> {
+                    try {
+                        return mapLakeToLakeResponse(lake);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(lakeResponses);
     }
 
     private LakeResponse mapLakeToLakeResponse(Lake lake) throws JsonProcessingException {
+        Double lat = lake.getGeometry().getX();
+        Double lng = lake.getGeometry().getY();
         return new LakeResponse()
                 .setId(lake.getId())
                 .setName(lake.getName())
-                .setGeometry(lake.getGeometry());
+                .setCoordinates(new Double[]{lat, lng});
     }
 
 

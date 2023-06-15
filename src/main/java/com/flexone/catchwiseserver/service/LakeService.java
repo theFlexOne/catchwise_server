@@ -38,4 +38,8 @@ public class LakeService {
     public Lake findLakeById(Long id) {
         return lakeRepository.findById(id).orElseThrow(() -> new RuntimeException("Lake not found"));
     }
+
+    public List<Lake> findLakesInRange(Double lat, Double lng, Integer range) {
+        return lakeRepository.findLakesInRange(lat, lng, range);
+    }
 }
