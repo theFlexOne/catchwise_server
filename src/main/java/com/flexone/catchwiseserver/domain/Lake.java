@@ -31,15 +31,19 @@ public class Lake {
   private String name;
 
   @Column(name = "county_fips")
+  @JsonIgnore
   private String countyFips;
 
   @Column(name = "local_id")
+  @JsonIgnore
   private String localId;
 
   @Column(name = "nearest_town")
+  @JsonIgnore
   private String nearestTown;
 
   @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
+  @JsonIgnore
   private Point geometry;
 
   @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)

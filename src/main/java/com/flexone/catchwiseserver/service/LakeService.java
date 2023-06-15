@@ -19,11 +19,7 @@ public class LakeService {
     }
 
     public List<Lake> findAllLakesInState(String stateName) {
-        return lakeRepository.findAllLakesInState(stateName);
-    }
-
-    public List<Lake> findAllLakesWithinDistance(double lon, double lat, int distance) {
-        return lakeRepository.findAllLakesWithinDistance(lon, lat, distance);
+        return lakeRepository.findAllLakesInStateByStateName(stateName);
     }
 
     public void save(Lake lake) {
@@ -39,7 +35,11 @@ public class LakeService {
         return lakeRepository.findById(id).orElseThrow(() -> new RuntimeException("Lake not found"));
     }
 
-    public List<Lake> findLakesInRange(Double lat, Double lng, Integer range) {
-        return lakeRepository.findLakesInRange(lat, lng, range);
+    public List<Lake> findLakesInRange(Double lat, Double lng, Long range) {
+        return lakeRepository.findLakesInRangeInMeters(lat, lng, range);
+    }
+
+    public List<Lake> findLakesInRangeByFish(Double lat, Double lng, Long range, String fish) {
+        return lakeRepository.findLakesInRangeInMetersByFish(lat, lng, range, fish);
     }
 }

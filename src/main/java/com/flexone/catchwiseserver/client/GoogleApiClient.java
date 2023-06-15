@@ -14,12 +14,12 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class GoogleApiClient {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    final String placesSearchUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext";
-    final String placesDetailsUrl = "https://maps.googleapis.com/maps/api/place/details";
-    final String placesPhotoUrl = "https://maps.googleapis.com/maps/api/place/photo";
-    final String elevationUrl = "https://maps.googleapis.com/maps/api/elevation";
-    final String reverseGeocodeUrl = "https://maps.googleapis.com/maps/api/geocode";
+    private static final RestTemplate restTemplate = new RestTemplate();
+    private static final String placesSearchUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext";
+    private static final String placesDetailsUrl = "https://maps.googleapis.com/maps/api/place/details";
+    private static final String placesPhotoUrl = "https://maps.googleapis.com/maps/api/place/photo";
+    private static final String elevationUrl = "https://maps.googleapis.com/maps/api/elevation";
+    private static final String reverseGeocodeUrl = "https://maps.googleapis.com/maps/api/geocode";
 
     @Value("${google.api.key}")
     String googleApiKey;

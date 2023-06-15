@@ -7,20 +7,37 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface LakeRepository  extends JpaRepository<Lake, Long> {
+public interface LakeRepository extends JpaRepository<Lake, Long> {
 
-    @Query(value = "SELECT l.* FROM lakes AS l WHERE ST_Within(l.geom, (SELECT s.geom FROM states AS s WHERE s.name = 'Minnesota'));", nativeQuery = true)
-    List<Lake> findAllLakesInState(@Param("stateName") String stateName);
+    @Query(value = "SELECT l.* FROM lakes AS l WHERE ST_Within(l.geom, (SELECT s.geom FROM states AS s WHERE s.name = :state))", nativeQuery = true)
+    List<Lake> findAllLakesInStateByStateName(String state);
 
-    @Query(value = "SELECT * FROM lakes as l WHERE ST_DWithin(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography, :distance);", nativeQuery = true)
-    List<Lake> findAllLakesWithinDistance(@Param("lng") double lng, @Param("lat") double lat, @Param("distance") double distance);
+    @Query(
+            value = "SELECT l.* FROM public.lakes AS l " +
+                    "INNER JOIN public.lakes_fish_species as lfs ON l.id = lfs.lake_id " +
+                    "WHERE ST_DWithin(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography, :range) " +
+                    "GROUP BY l.id " +
+                    "ORDER BY ST_Distance(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography);",
+            nativeQuery = true
+    )
+    List<Lake> findLakesInRangeInMeters(Double lat, Double lng, Long range);
+
+    @Query(
+            value = "SELECT l.* FROM public.lakes AS l " +
+                    "INNER JOIN public.lakes_fish_species as lfs ON l.id = lfs.lake_id " +
+                    "INNER JOIN public.fish_species AS fs ON fs.id = lfs.fish_species_id " +
+                    "WHERE fs.name = :fish " +
+                    "AND ST_DWithin(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography, :range) " +
+                    "ORDER BY ST_Distance(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography);",
+            nativeQuery = true
+    )
+    List<Lake> findLakesInRangeInMetersByFish(Double lat, Double lng, Long range, String fish);
 
 
-    @Query(value = "SELECT * FROM lakes as l WHERE ST_DWithin(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography, :range);", nativeQuery = true)
-    List<Lake> findLakesInRange(Double lat, Double lng, Integer range);
+
 }
 
 
 /**
-    1. Find all lakes within a given bounding box with a given buffer distance
+ * 1. Find all lakes within a given bounding box with a given buffer distance
  */

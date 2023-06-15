@@ -23,8 +23,7 @@ import java.util.Arrays;
 @RequestMapping("/google")
 public class GoogleApiController {
 
-    private final GoogleApiClient googleApiClient;
-
+    private static final GoogleApiClient googleApiClient = new GoogleApiClient();
     @GetMapping("/place/search")
     public ResponseEntity<Object> getPlaceSearch(
             @RequestParam String query,
@@ -38,6 +37,7 @@ public class GoogleApiController {
         return ResponseEntity.ok(response);
     }
 
+
     @GetMapping("/place/details")
     public ResponseEntity<Object> getPlaceDetails(
             @RequestParam(name = "place_id") String placeId,
@@ -50,6 +50,7 @@ public class GoogleApiController {
         return ResponseEntity.ok(response);
     }
 
+
     @GetMapping("/place/photo")
     public ResponseEntity<Object> getPlacePhoto(
             @RequestParam(name = "photo_reference") String photoReference,
@@ -61,6 +62,7 @@ public class GoogleApiController {
         return ResponseEntity.ok(response);
     }
 
+
     @GetMapping("/elevation")
     public ResponseEntity<Object> getElevation(
             @RequestParam Double lat,
@@ -71,6 +73,7 @@ public class GoogleApiController {
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/reverse-geocode")
     public ResponseEntity<Object> getReverseGeocode(

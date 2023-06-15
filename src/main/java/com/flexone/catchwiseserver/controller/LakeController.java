@@ -1,20 +1,16 @@
 package com.flexone.catchwiseserver.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.flexone.catchwiseserver.domain.FishSpecies;
 import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.dto.LakeJSON;
 import com.flexone.catchwiseserver.dto.LakeResponse;
 import com.flexone.catchwiseserver.service.LakeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wololo.geojson.GeoJSON;
-import org.wololo.geojson.GeoJSONFactory;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,6 +30,15 @@ public class LakeController {
         return ResponseEntity.ok(lakeResponse);
     }
 
+    @GetMapping("/{id}/fish")
+    public ResponseEntity<List<FishSpecies>> getFishByLakeId(@PathVariable("id") Long id) throws Exception {
+        Lake lake = lakeService.findLakeById(id);
+        log.info("Returning lake {}", lake.getName());
+        log.info("Returning lake {}", lake.getGeometry());
+        List<FishSpecies> fish = lake.getFishSpecies();
+        return ResponseEntity.ok(fish);
+    }
+
     @GetMapping
     public ResponseEntity<List<LakeResponse>> getAllLakes() {
         List<Lake> lakes = lakeService.findAllLakes();
@@ -50,13 +55,20 @@ public class LakeController {
         return ResponseEntity.ok(lakeResponses);
     }
 
+
     @GetMapping("/in-range")
     public ResponseEntity<List<LakeResponse>> getLakesInRange(
             @RequestParam("lat") Double lat,
             @RequestParam("lng") Double lng,
-            @RequestParam("range") Integer range
+            @RequestParam("range") Long range,
+            @RequestParam(value = "fish", required = false) String fish
     ) {
-        List<Lake> lakes = lakeService.findLakesInRange(lat, lng, range);
+        List<Lake> lakes;
+        if (fish != null) {
+            lakes = lakeService.findLakesInRangeByFish(lat, lng, range, fish);
+        } else {
+            lakes = lakeService.findLakesInRange(lat, lng, range);
+        }
         log.info("Returning {} lakes", lakes.size());
         List<LakeResponse> lakeResponses = lakes.stream()
                 .map(lake -> {
