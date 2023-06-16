@@ -4,6 +4,7 @@ package com.flexone.catchwiseserver.domain;
 import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
 import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javax.persistence.*;
@@ -21,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Table(name = "lakes")
+@JsonIgnoreProperties({"id", "geometry", "countyFips", "localId", "nearestTown"})
 public class Lake {
 
   @Id
@@ -31,19 +33,15 @@ public class Lake {
   private String name;
 
   @Column(name = "county_fips")
-  @JsonIgnore
   private String countyFips;
 
   @Column(name = "local_id")
-  @JsonIgnore
   private String localId;
 
   @Column(name = "nearest_town")
-  @JsonIgnore
   private String nearestTown;
 
   @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
-  @JsonIgnore
   private Point geometry;
 
   @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
