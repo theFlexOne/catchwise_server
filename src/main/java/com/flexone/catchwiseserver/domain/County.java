@@ -34,7 +34,7 @@ public class County {
   @Column(name = "ansi")
   private String ansiCode;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
   @JoinColumn(name = "state_id", nullable = false)
   private State state;
 
@@ -42,4 +42,5 @@ public class County {
   @JsonSerialize(using = GeometrySerializer.class)
   @JsonDeserialize(using = GeometryDeserializer.class)
   private MultiPolygon geometry;
+
 }

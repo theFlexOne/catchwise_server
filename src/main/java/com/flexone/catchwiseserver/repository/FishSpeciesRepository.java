@@ -2,9 +2,22 @@ package com.flexone.catchwiseserver.repository;
 
 import com.flexone.catchwiseserver.domain.FishSpecies;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+import java.util.Set;
 
 public interface FishSpeciesRepository extends JpaRepository<FishSpecies, Long> {
 
-    FishSpecies findBySpeciesAndGenusAllIgnoreCase(String species, String genus);
+    FishSpecies findByGenusAndSpeciesAllIgnoreCase(String species, String genus);
+
+    @Query(value = "SELECT f FROM fish_species fs WHERE f.genus = ?1 AND f.species IN ?2", nativeQuery = true)
+    List<FishSpecies> findAllByGenusAndSpeciesIn(List<String[]> lakeFishSpeciesGenusAndSpeciesList);
+
+    @Query(value = "SELECT fs.* FROM fish_species AS fs " +
+            "INNER JOIN lakes_fish_species AS lfs ON fs.id = lfs.fish_species_id " +
+            "WHERE lfs.lake_id = :lakeId", nativeQuery = true)
+    List<FishSpecies> findAllByLakeId(Long lakeId);
+
 
 }

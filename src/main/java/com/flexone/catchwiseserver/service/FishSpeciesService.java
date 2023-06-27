@@ -1,6 +1,7 @@
 package com.flexone.catchwiseserver.service;
 
 import com.flexone.catchwiseserver.domain.FishSpecies;
+import com.flexone.catchwiseserver.dto.FishSpeciesDTO;
 import com.flexone.catchwiseserver.repository.FishSpeciesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,33 +15,7 @@ import java.util.List;
 public class FishSpeciesService {
 
     final FishSpeciesRepository fishSpeciesRepository;
-
-    public FishSpecies findByScientificName(String scientificName) {
-        String[] scientificNameParts = scientificName.split(" ");
-        if (scientificNameParts.length != 2) {
-            return null;
-        }
-        String genus = scientificNameParts[0];
-        String species = scientificNameParts[1];
-        return fishSpeciesRepository.findBySpeciesAndGenusAllIgnoreCase(species, genus);
-    }
-
-    public FishSpecies findOrCreateByScientificName(String scientificName) {
-        FishSpecies fishSpecies = findByScientificName(scientificName);
-        if (fishSpecies == null) {
-            String[] scientificNameParts = scientificName.split(" ");
-            if (scientificNameParts.length != 2) {
-                return null;
-            }
-            String genus = scientificNameParts[0];
-            String species = scientificNameParts[1];
-            fishSpecies = new FishSpecies();
-            fishSpecies.setGenus(genus);
-            fishSpecies.setSpecies(species);
-            save(fishSpecies);
-        }
-        return fishSpecies;
-    }
+    final LakeService lakeService;
 
     public void save(FishSpecies fishSpecies) {
         fishSpeciesRepository.save(fishSpecies);
@@ -50,5 +25,20 @@ public class FishSpeciesService {
         fishSpeciesRepository.saveAll(fishSpeciesList);
     }
 
+    public List<FishSpeciesDTO> findLakeFishById(Long id) {
+        return fishSpeciesRepository.findAllByLakeId(id).stream().map(fs -> {
+            FishSpeciesDTO fishSpeciesDTO = new FishSpeciesDTO();
+            fishSpeciesDTO.setId(fs.getId());
+            fishSpeciesDTO.setName(fs.getName());
+            return fishSpeciesDTO;
+        }).toList();
+    }
 
+    public List<FishSpecies> findAllByGenusAndSpeciesIn(List<String[]> lakeFishSpeciesGenusAndSpeciesList) {
+        return fishSpeciesRepository.findAllByGenusAndSpeciesIn(lakeFishSpeciesGenusAndSpeciesList);
+    }
+
+    public FishSpecies findByGenusAndSpecies(String genus, String species) {
+        return fishSpeciesRepository.findByGenusAndSpeciesAllIgnoreCase(genus, species);
+    }
 }

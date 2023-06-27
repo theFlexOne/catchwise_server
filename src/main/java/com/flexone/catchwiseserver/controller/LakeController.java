@@ -1,9 +1,10 @@
 package com.flexone.catchwiseserver.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.flexone.catchwiseserver.domain.FishSpecies;
-import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.dto.LakeResponse;
+import com.flexone.catchwiseserver.dto.FishSpeciesDTO;
+import com.flexone.catchwiseserver.dto.LakeDTO;
+import com.flexone.catchwiseserver.dto.LakeFishResponseDTO;
+import com.flexone.catchwiseserver.dto.LakeMarkerDTO;
+import com.flexone.catchwiseserver.service.FishSpeciesService;
 import com.flexone.catchwiseserver.service.LakeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/lakes")
@@ -20,76 +21,30 @@ import java.util.stream.Collectors;
 public class LakeController {
 
     final LakeService lakeService;
+    final FishSpeciesService fishSpeciesService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<LakeResponse> getLakeById(@PathVariable("id") Long id) throws Exception {
-        Lake lake = lakeService.findLakeById(id);
-        log.info("Returning lake {}", lake.getName());
-        log.info("Returning lake {}", lake.getGeometry());
-        LakeResponse lakeResponse = mapLakeToLakeResponse(lake);
-        return ResponseEntity.ok(lakeResponse);
+    public ResponseEntity<LakeDTO> getLakeById(@PathVariable("id") Long id) throws Exception {
+        LakeDTO lakeDTO = lakeService.findById(id);
+        return ResponseEntity.ok(lakeDTO);
+    }
+
+    @GetMapping("/markers")
+    public ResponseEntity<List<LakeMarkerDTO>> getLakeMarkers(
+            @RequestParam("lat") Double lat,
+            @RequestParam("lng") Double lng,
+            @RequestParam( defaultValue = "50000") Long range
+    ) throws Exception {
+        return ResponseEntity.ok(
+                lakeService.findLakeMarkersInRange(lng, lat, range)
+        );
     }
 
     @GetMapping("/{id}/fish")
-    public ResponseEntity<List<FishSpecies>> getFishByLakeId(@PathVariable("id") Long id) throws Exception {
-        Lake lake = lakeService.findLakeById(id);
-        log.info("Returning lake {}", lake.getName());
-        log.info("Returning lake {}", lake.getGeometry());
-        List<FishSpecies> fish = lake.getFishSpecies();
-        return ResponseEntity.ok(fish);
+    public ResponseEntity<List<FishSpeciesDTO>> getLakeFishById(@PathVariable("id") Long id) throws Exception {
+        List<FishSpeciesDTO> lakeFishResponseDTOList = fishSpeciesService.findLakeFishById(id);
+        log.info("fish count {}", lakeFishResponseDTOList.size());
+        return ResponseEntity.ok(lakeFishResponseDTOList);
     }
-
-    @GetMapping
-    public ResponseEntity<List<LakeResponse>> getAllLakes() {
-        List<Lake> lakes = lakeService.findAllLakes();
-        log.info("Returning {} lakes", lakes.size());
-        List<LakeResponse> lakeResponses = lakes.stream()
-                .map(lake -> {
-                    try {
-                        return mapLakeToLakeResponse(lake);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(lakeResponses);
-    }
-
-
-    @GetMapping("/in-range")
-    public ResponseEntity<List<LakeResponse>> getLakesInRange(
-            @RequestParam("lat") Double lat,
-            @RequestParam("lng") Double lng,
-            @RequestParam("range") Long range,
-            @RequestParam(value = "fish", required = false) String fish
-    ) {
-        List<Lake> lakes;
-        if (fish != null) {
-            lakes = lakeService.findLakesInRangeByFish(lat, lng, range, fish);
-        } else {
-            lakes = lakeService.findLakesInRange(lat, lng, range);
-        }
-        log.info("Returning {} lakes", lakes.size());
-        List<LakeResponse> lakeResponses = lakes.stream()
-                .map(lake -> {
-                    try {
-                        return mapLakeToLakeResponse(lake);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(lakeResponses);
-    }
-
-    private LakeResponse mapLakeToLakeResponse(Lake lake) throws JsonProcessingException {
-        Double lat = lake.getGeometry().getX();
-        Double lng = lake.getGeometry().getY();
-        return new LakeResponse()
-                .setId(lake.getId())
-                .setName(lake.getName())
-                .setCoordinates(new Double[]{lat, lng});
-    }
-
 
 }

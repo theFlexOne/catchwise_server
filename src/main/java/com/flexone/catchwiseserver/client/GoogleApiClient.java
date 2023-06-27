@@ -1,11 +1,8 @@
 package com.flexone.catchwiseserver.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.flexone.catchwiseserver.dto.GoogleApiJSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,6 +11,9 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class GoogleApiClient {
 
+    @Value("${GOOGLE_API_KEY}")
+    String googleApiKey;
+
     private static final RestTemplate restTemplate = new RestTemplate();
     private static final String placesSearchUrl = "https://maps.googleapis.com/maps/api/place/findplacefromtext";
     private static final String placesDetailsUrl = "https://maps.googleapis.com/maps/api/place/details";
@@ -21,10 +21,8 @@ public class GoogleApiClient {
     private static final String elevationUrl = "https://maps.googleapis.com/maps/api/elevation";
     private static final String reverseGeocodeUrl = "https://maps.googleapis.com/maps/api/geocode";
 
-    @Value("${google.api.key}")
-    String googleApiKey;
-
     public Object useGooglePlaceSearchApi(String query, String[] fields, String inputType, String output) {
+        log.info(googleApiKey);
         inputType = inputType == null ? "textquery" : inputType;
         output = output == null ? "json" : output;
         fields = fields.length == 0 ? new String[]{"name", "place_id"} : fields;

@@ -1,13 +1,18 @@
 package com.flexone.catchwiseserver.domain;
 
 import javax.persistence.*;
-import lombok.Data;
+
+import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Accessors(chain = true)
 @Table(name = "fish_species")
 public class FishSpecies {
@@ -16,11 +21,8 @@ public class FishSpecies {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
-
-    @Column(name = "family")
-    private String family;
 
     @Column(name = "genus")
     private String genus;
@@ -31,12 +33,25 @@ public class FishSpecies {
     @Column(name = "description", length = 10000)
     private String description;
 
-    @Column(name = "identification", length = 10000)
-    private String identification;
+    @Column(name = "fish_img_url")
+    private String imgUrl;
+
+    @Column(name = "location_map_img_url")
+    private String locationMapImgUrl;
 
     @ElementCollection
-    @CollectionTable(name = "other_fish_species_names", joinColumns = @JoinColumn(name = "fish_species_id"))
-    private List<String> otherNames;
+    @CollectionTable(name = "fish_species_regions", joinColumns = @JoinColumn(name = "fish_species_id"))
+    @Column(name = "region")
+    private Set<String> regions = new HashSet<>();
+
+
+    @ElementCollection
+    @CollectionTable(name = "fish_species_waterbodies", joinColumns = @JoinColumn(name = "fish_species_id"))
+    @Column(name = "waterbody")
+    private Set<String> waterbodies = new HashSet<>();
+
+    @ManyToMany(mappedBy = "fishSpecies")
+    private Set<Lake> lakes = new HashSet<>();
 
     public String getScientificName() {
         return this.genus + " " + this.species;

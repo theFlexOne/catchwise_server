@@ -1,9 +1,6 @@
 package com.flexone.catchwiseserver.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.flexone.catchwiseserver.client.GoogleApiClient;
-import com.flexone.catchwiseserver.dto.GoogleApiJSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
@@ -23,7 +19,8 @@ import java.util.Arrays;
 @RequestMapping("/google")
 public class GoogleApiController {
 
-    private static final GoogleApiClient googleApiClient = new GoogleApiClient();
+    private final GoogleApiClient googleApiClient;
+
     @GetMapping("/place/search")
     public ResponseEntity<Object> getPlaceSearch(
             @RequestParam String query,

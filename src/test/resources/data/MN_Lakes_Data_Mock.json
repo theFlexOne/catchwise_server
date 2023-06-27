@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Lake 1",
+    "localId": "1",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -95.100,
+        48.001
+      ]
+    }
+  },
+  {
+    "name": "Lake 2",
+    "localId": "2",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -95.400,
+        48.100
+      ]
+    }
+  },
+  {
+    "name": "Lake 3",
+    "localId": "3",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -95.200,
+        47.900
+      ]
+    }
+  }
+]

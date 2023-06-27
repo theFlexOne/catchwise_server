@@ -20,4 +20,11 @@ public class StateService {
     stateRepository.saveAll(states);
   }
 
+  public State findByFipsCode(String statefp) {
+    return stateRepository.findByFipsCode(statefp);
+  }
+
+  public State findByAbbreviation(String abbr) {
+    return stateRepository.findByAbbreviation(abbr);
+  }
 }
