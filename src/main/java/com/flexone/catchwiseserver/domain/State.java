@@ -39,25 +39,9 @@ public class State {
   @Column(name = "ansi")
   private String ansiCode;
 
-  @OneToMany(
-          mappedBy = "state",
-          cascade = CascadeType.ALL,
-          orphanRemoval = true
-  )
-  @JsonIgnore
-  private List<County> counties = new ArrayList<>();
-
   @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
   @JsonSerialize(using = GeometrySerializer.class)
   @JsonDeserialize(using = GeometryDeserializer.class)
   private MultiPolygon geometry;
-
-  public State addCounties(List<County> countyList) {
-    this.counties.addAll(countyList);
-    countyList.forEach(county -> county.setState(this));
-    return this;
-  }
-
-
 
 }

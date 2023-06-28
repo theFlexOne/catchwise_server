@@ -34,9 +34,10 @@ public class County {
   @Column(name = "ansi")
   private String ansiCode;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "state_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "state_id")
   private State state;
+
 
   @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
   @JsonSerialize(using = GeometrySerializer.class)
