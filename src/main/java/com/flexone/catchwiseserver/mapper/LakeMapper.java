@@ -17,11 +17,7 @@ public abstract class LakeMapper {
     public LakeDTO toDto(Lake lake) {
         return new LakeDTO()
                 .setId(lake.getId())
-                .setName(lake.getName())
-                .setCountyFips(lake.getCountyFips())
-                .setLocalId(lake.getLocalId())
-                .setNearestTown(lake.getNearestTown())
-                .setCoordinates(lake.getGeometry());
+                .setName(lake.getName());
     };
     public abstract List<LakeDTO> toDtoList(List<Lake> lakeList);
 

@@ -27,4 +27,7 @@ public class CountyService {
     countyRepository.saveAll(counties);
   }
 
+  public County findByName(String county) {
+    return countyRepository.findByName(county);
+  }
 }

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -40,21 +41,21 @@ public class FishSpecies {
     private String locationMapImgUrl;
 
     @ElementCollection
-    @CollectionTable(name = "fish_species_regions", joinColumns = @JoinColumn(name = "fish_species_id"))
-    @Column(name = "region")
-    private Set<String> regions = new HashSet<>();
-
-
-    @ElementCollection
-    @CollectionTable(name = "fish_species_waterbodies", joinColumns = @JoinColumn(name = "fish_species_id"))
-    @Column(name = "waterbody")
-    private Set<String> waterbodies = new HashSet<>();
+    @CollectionTable(name = "fish_species_common_names", joinColumns = @JoinColumn(name = "fish_species_id"))
+    private List<String> commonNames;
 
     @ManyToMany(mappedBy = "fishSpecies")
     private Set<Lake> lakes = new HashSet<>();
 
     public String getScientificName() {
         return this.genus + " " + this.species;
+    }
+    public FishSpecies setScientificName(String scientificName) {
+        String[] split = scientificName.split(" ");
+        if (split.length != 2) throw new IllegalArgumentException("Scientific name must be in format: Genus Species");
+        this.genus = split[0];
+        this.species = split[1];
+        return this;
     }
 
 }

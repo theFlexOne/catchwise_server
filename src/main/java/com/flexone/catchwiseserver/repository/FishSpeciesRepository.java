@@ -11,8 +11,6 @@ public interface FishSpeciesRepository extends JpaRepository<FishSpecies, Long> 
 
     FishSpecies findByGenusAndSpeciesAllIgnoreCase(String species, String genus);
 
-    @Query(value = "SELECT f FROM fish_species fs WHERE f.genus = ?1 AND f.species IN ?2", nativeQuery = true)
-    List<FishSpecies> findAllByGenusAndSpeciesIn(List<String[]> lakeFishSpeciesGenusAndSpeciesList);
 
     @Query(value = "SELECT fs.* FROM fish_species AS fs " +
             "INNER JOIN lakes_fish_species AS lfs ON fs.id = lfs.fish_species_id " +

@@ -12,34 +12,7 @@ import java.util.Set;
 public class FishSpeciesJSON {
 
     private String name;
+    private String scientificName;
+    private List<String> commonNames;
 
-    private String genus;
-
-    private String species;
-
-    private String description;
-
-    @JsonProperty("fishImgUrl")
-    private String imgUrl;
-
-    private Set<String> regions;
-
-    private Set<String> waterbodies;
-
-    private String locationMapImgUrl;
-
-    private List<Link> habitats;
-
-    private List<Link> techniques;
-
-    private List<Link> bait;
-
-    @JsonProperty("mnLakesLocalIds")
-    private List<String> localIds;
-
-    @Data
-    private static class Link {
-        private String name;
-        private String url;
-    }
 }

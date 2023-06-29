@@ -10,4 +10,5 @@ public interface CountyRepository extends JpaRepository<County, Long> {
 Optional<County> findByFipsCode(String fipsCode);
 
 
+    County findByName(String county);
 }

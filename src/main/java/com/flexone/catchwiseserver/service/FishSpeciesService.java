@@ -34,11 +34,13 @@ public class FishSpeciesService {
         }).toList();
     }
 
-    public List<FishSpecies> findAllByGenusAndSpeciesIn(List<String[]> lakeFishSpeciesGenusAndSpeciesList) {
-        return fishSpeciesRepository.findAllByGenusAndSpeciesIn(lakeFishSpeciesGenusAndSpeciesList);
-    }
-
     public FishSpecies findByGenusAndSpecies(String genus, String species) {
         return fishSpeciesRepository.findByGenusAndSpeciesAllIgnoreCase(genus, species);
     }
+
+    public FishSpecies findByScientificName(String scientificName) {
+        String[] genusAndSpecies = scientificName.split(" ");
+        return fishSpeciesRepository.findByGenusAndSpeciesAllIgnoreCase(genusAndSpecies[0], genusAndSpecies[1]);
+    }
+
 }

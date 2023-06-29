@@ -29,17 +29,11 @@ public class Lake {
   @Column(name = "name")
   private String name;
 
-  @Column(name = "county_fips")
-  private String countyFips;
-
   @Column(name = "local_id")
   private String localId;
 
   @Column(name = "nearest_town")
   private String nearestTown;
-
-  @Column(name = "description", length = 10000)
-  private String description;
 
   @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
   private MultiPolygon geometry;

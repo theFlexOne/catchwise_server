@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.Coordinates;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.wololo.geojson.Feature;
 
 import java.util.List;
 
@@ -16,38 +18,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LakeJSON {
 
-  String name;
-  String countyFips;
-  String localId;
-  String nearestTown;
-  LatLng coordinates;
-
-  @JsonProperty("fish")
-  List<FishSpecies> fishSpecies;
-
-  List<Component> components;
-
-  @Data
-  public static class LatLng {
-    @JsonProperty("latitude")
-    double lat;
-    @JsonProperty("longitude")
-    double lng;
-  }
-
   @Data
   public static class FishSpecies {
     String name;
-    String species;
+    String scientificName;
   }
 
   @Data
-  private static class Component {
-    String localId;
-    String name;
-    LatLng coordinates;
-
-    @JsonProperty("fish")
-    List<FishSpecies> fishSpecies;
+  public static class Geometry {
+    String type = "MultiPolygon";
+    List<List<List<Double>>> coordinates;
   }
+
+  String id;
+  String name;
+  Long gnisId;
+  String county;
+  String nearestTown;
+  List<FishSpecies> fishSpecies;
+  Geometry geometry;
+  Double shorelineLength;
+  Double area;
+  Double maxDepth;
 }

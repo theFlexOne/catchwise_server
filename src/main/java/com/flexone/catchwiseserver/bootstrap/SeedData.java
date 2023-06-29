@@ -23,12 +23,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.GeoJSON;
 import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -106,92 +106,75 @@ public class SeedData implements CommandLineRunner {
     }
 
     private void seedFishSpecies() throws IOException {
-        final String pathName = "src/main/resources/data/Game_Fish_Species_Data_2.json";
+        final String pathName = "src/main/resources/data/Fish_Species.json";
 
         CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(Collection.class, FishSpeciesJSON.class);
         List<FishSpeciesJSON> fishSpeciesJSONList = mapper.readValue(Paths.get(pathName).toFile(), collectionType);
 
-        List<FishSpecies> fishSpeciesList = new ArrayList<>();
-        for (FishSpeciesJSON fishSpeciesJSON : fishSpeciesJSONList) {
-            FishSpecies fishSpecies = new FishSpecies()
-                    .setGenus(fishSpeciesJSON.getGenus())
-                    .setSpecies(fishSpeciesJSON.getSpecies())
-                    .setDescription(fishSpeciesJSON.getDescription())
-                    .setImgUrl(fishSpeciesJSON.getImgUrl())
-                    .setLocationMapImgUrl(fishSpeciesJSON.getLocationMapImgUrl())
-                    .setRegions(fishSpeciesJSON.getRegions())
-                    .setWaterbodies(fishSpeciesJSON.getWaterbodies());
-            fishSpeciesList.add(fishSpecies);
-        }
+        List<FishSpecies> fishSpeciesList = fishSpeciesJSONList
+                .stream().map(json -> {
+                    FishSpecies fishSpecies = fishSpeciesService.findByScientificName(json.getScientificName());
+                    if (fishSpecies == null) {
+                        fishSpecies = new FishSpecies()
+                                .setName(json.getName())
+                                .setScientificName(json.getScientificName())
+                                .setCommonNames(json.getCommonNames());
+                    }
+                    return fishSpecies;
+                }).toList();
+        log.info("FishSpecies list length: {}", fishSpeciesList.size());
         fishSpeciesService.saveAll(fishSpeciesList);
     }
 
     private void seedLakes() throws IOException {
-        final String pathName = "src/main/resources/data/MN_Lakes_Master.json";
-        List<NewLakeJSON> lakeJSONList = new ArrayList<>();
-            CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(Collection.class, NewLakeJSON.class);
-            lakeJSONList = mapper.readValue(Paths.get(pathName).toFile(), collectionType);
+        final String pathName = "src/main/resources/data/MN_Lakes_Master_List_Clean.json";
 
-            List<Lake> lakesList = new ArrayList<>();
-            for (NewLakeJSON lakeJSON : lakeJSONList) {
-                List<String[]> fishSpeciesPartsList = lakeJSON.getFish().stream()
-                        .map(fish -> fish.getSpecies().split(" "))
-                        .toList();
-                List<FishSpecies> fishSpeciesList = new ArrayList<>();
+        CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(Collection.class, LakeJSON.class);
+        List<LakeJSON> lakeJSONList = mapper.readValue(Paths.get(pathName).toFile(), collectionType);
+        List<Lake> lakesList = lakeJSONList.stream().map(json -> {
+            County county = countyService.findByName(json.getCounty());
+            List<FishSpecies> fishSpeciesList = json.getFishSpecies().stream().map(fs -> fishSpeciesService.findByScientificName(fs.getScientificName())).toList();
+            MultiPolygon lakeGeometry = geometryFactory.createMultiPolygon(json.getGeometry().getCoordinates().stream().map(c -> {
+                Polygon polygon = geometryFactory.createPolygon(c.stream().map(p -> new Coordinate(p.get(0), p.get(1))).toArray(Coordinate[]::new));
+                return polygon;
+            }).toArray(Polygon[]::new));
+            Lake lake = new Lake()
+                    .setName(json.getName())
+                    .setLocalId(json.getId())
+                    .setNearestTown(json.getNearestTown())
+                    .setCounty(county)
+                    .setGeometry((MultiPolygon) lakeGeometry)
+                    .setFishSpecies(new HashSet<>(fishSpeciesList));
+            return lake;
+        }).toList();
 
-                for (String[] fishSpecies : fishSpeciesPartsList) {
-                    if (fishSpecies.length != 2) {
-                        log.error("Fish species not formatted correctly");
-                        log.error("Fish species: {}", Arrays.toString(fishSpecies));
-                        continue;
-                    }
-                    FishSpecies fs = fishSpeciesService.findByGenusAndSpecies(fishSpecies[0], fishSpecies[1]);
-                    if (fs == null) {
-                        log.error("Fish species not found");
-                        log.error("Fish species: {}", Arrays.toString(fishSpecies));
-                        continue;
-                    }
-                    fishSpeciesList.add(fs);
-                }
-
-                MultiPolygon geometry = lakeJSON.getGeometry();
-
-                Lake lake = new Lake()
-                        .setName(lakeJSON.getName())
-                        .setLocalId(lakeJSON.getLocalId())
-                        .setGeometry(geometry)
-                        .setDescription(lakeJSON.getDescription())
-                        .setNearestTown(lakeJSON.getNearestTown())
-                        .setFishSpecies(new HashSet<>(fishSpeciesList));
-                lakesList.add(lake);
-            }
-            lakeService.saveAll(lakesList);
+        lakeService.saveAll(lakesList);
     }
 
-    private FishSpecies mapFishSpeciesJSONToFishSpecies(FishSpeciesJSON json, List<Lake> lakesList) {
-        return new FishSpecies()
-                .setName(json.getName())
-                .setGenus(json.getGenus())
-                .setSpecies(json.getSpecies())
-                .setDescription(json.getDescription())
-                .setImgUrl(json.getImgUrl())
-                .setRegions(json.getRegions())
-                .setWaterbodies(json.getWaterbodies())
-                .setLocationMapImgUrl(json.getLocationMapImgUrl())
-                .setLakes(new HashSet<>(lakesList));
-    }
-
-    private FishSpecies mapFishSpeciesJSONToFishSpecies(FishSpeciesJSON json) {
-        return new FishSpecies()
-                .setName(json.getName())
-                .setGenus(json.getGenus())
-                .setSpecies(json.getSpecies())
-                .setDescription(json.getDescription())
-                .setImgUrl(json.getImgUrl())
-                .setRegions(json.getRegions())
-                .setWaterbodies(json.getWaterbodies())
-                .setLocationMapImgUrl(json.getLocationMapImgUrl());
-    }
+//    private FishSpecies mapFishSpeciesJSONToFishSpecies(FishSpeciesJSON json, List<Lake> lakesList) {
+//        return new FishSpecies()
+//                .setName(json.getName())
+//                .setGenus(json.getGenus())
+//                .setSpecies(json.getSpecies())
+//                .setDescription(json.getDescription())
+//                .setImgUrl(json.getImgUrl())
+//                .setRegions(json.getRegions())
+//                .setWaterbodies(json.getWaterbodies())
+//                .setLocationMapImgUrl(json.getLocationMapImgUrl())
+//                .setLakes(new HashSet<>(lakesList));
+//    }
+//
+//    private FishSpecies mapFishSpeciesJSONToFishSpecies(FishSpeciesJSON json) {
+//        return new FishSpecies()
+//                .setName(json.getName())
+//                .setGenus(json.getGenus())
+//                .setSpecies(json.getSpecies())
+//                .setDescription(json.getDescription())
+//                .setImgUrl(json.getImgUrl())
+//                .setRegions(json.getRegions())
+//                .setWaterbodies(json.getWaterbodies())
+//                .setLocationMapImgUrl(json.getLocationMapImgUrl());
+//    }
 
     private FeatureCollection importFeatureCollection(String pathName) throws IOException {
         return new ObjectMapper().readValue(Paths.get(pathName).toFile(), FeatureCollection.class);
