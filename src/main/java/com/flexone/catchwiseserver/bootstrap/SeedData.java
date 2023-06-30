@@ -46,8 +46,12 @@ public class SeedData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String jsonFilePath = "src/main/resources/data/Game_Fish_Species_Data_2.json";
 
+
+//        seedData();
+    }
+
+    private void seedData() throws IOException {
         log.info("Seeding data");
 
         log.info("Seeding states");
@@ -89,9 +93,13 @@ public class SeedData implements CommandLineRunner {
         Feature[] features = countiesFeatureCollection.getFeatures();
 
 
-        State state = stateService.findByAbbreviation("MN");
         List<County> countiesList = new ArrayList<>();
         for (Feature feature : features) {
+            State state = stateService.findByAbbreviation(feature.getProperties().get("STUSPS").toString());
+            if (state == null) {
+                log.error("State not found for abbreviation: {}", feature.getProperties().get("STUSPS"));
+                continue;
+            }
             Map<String, Object> properties = feature.getProperties();
             Geometry countyGeometry = reader.read(feature.getGeometry());
             County county = new County()
@@ -102,6 +110,7 @@ public class SeedData implements CommandLineRunner {
                     .setState(state);
             countiesList.add(county);
         }
+        log.info("Counties list length: {}", countiesList.size());
         countyService.saveAll(countiesList);
     }
 
@@ -127,25 +136,31 @@ public class SeedData implements CommandLineRunner {
     }
 
     private void seedLakes() throws IOException {
-        final String pathName = "src/main/resources/data/MN_Lakes_Master_List_Clean.json";
+        final String pathName = "src/main/resources/data/MN_Lakes_Master_List.json";
 
         CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(Collection.class, LakeJSON.class);
         List<LakeJSON> lakeJSONList = mapper.readValue(Paths.get(pathName).toFile(), collectionType);
         List<Lake> lakesList = lakeJSONList.stream().map(json -> {
-            County county = countyService.findByName(json.getCounty());
-            List<FishSpecies> fishSpeciesList = json.getFishSpecies().stream().map(fs -> fishSpeciesService.findByScientificName(fs.getScientificName())).toList();
-            MultiPolygon lakeGeometry = geometryFactory.createMultiPolygon(json.getGeometry().getCoordinates().stream().map(c -> {
-                Polygon polygon = geometryFactory.createPolygon(c.stream().map(p -> new Coordinate(p.get(0), p.get(1))).toArray(Coordinate[]::new));
-                return polygon;
-            }).toArray(Polygon[]::new));
-            Lake lake = new Lake()
+            List<FishSpecies> fishSpeciesList = json.getFishSpecies().stream().reduce(new ArrayList<>(), (list, fs) -> {
+                String genus = fs.getScientificName().split(" ")[0];
+                String species = fs.getScientificName().split(" ")[1];
+                FishSpecies fishSpecies = fishSpeciesService.findByGenusAndSpecies(genus, species);
+                if (fishSpecies != null) {
+                    list.add(fishSpecies);
+                }
+                return list;
+            }, (list1, list2) -> {
+                list1.addAll(list2);
+                return list1;
+            });
+            Geometry lakeGeometry = reader.read(json.getFeature().getGeometry());
+
+            return new Lake()
                     .setName(json.getName())
                     .setLocalId(json.getId())
                     .setNearestTown(json.getNearestTown())
-                    .setCounty(county)
-                    .setGeometry((MultiPolygon) lakeGeometry)
-                    .setFishSpecies(new HashSet<>(fishSpeciesList));
-            return lake;
+                    .setFishSpecies(fishSpeciesList)
+                    .setGeometry((MultiPolygon) lakeGeometry);
         }).toList();
 
         lakeService.saveAll(lakesList);

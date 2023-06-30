@@ -34,7 +34,7 @@ public class County {
   @Column(name = "ansi")
   private String ansiCode;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
   @JoinColumn(name = "state_id", nullable = false)
   private State state;
 

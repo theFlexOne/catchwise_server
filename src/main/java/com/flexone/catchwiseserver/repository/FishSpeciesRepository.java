@@ -5,11 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 public interface FishSpeciesRepository extends JpaRepository<FishSpecies, Long> {
 
-    FishSpecies findByGenusAndSpeciesAllIgnoreCase(String species, String genus);
+    @Query("SELECT fs FROM FishSpecies fs WHERE LOWER(fs.genus) = LOWER(:genus) AND LOWER(fs.species) = LOWER(:species)")
+    Optional<FishSpecies> findByGenusAndSpeciesAllIgnoreCase(String genus, String species);
 
 
     @Query(value = "SELECT fs.* FROM fish_species AS fs " +
@@ -18,4 +19,5 @@ public interface FishSpeciesRepository extends JpaRepository<FishSpecies, Long> 
     List<FishSpecies> findAllByLakeId(Long lakeId);
 
 
+    Optional<FishSpecies> findByGenusAndSpecies(String genus, String species);
 }

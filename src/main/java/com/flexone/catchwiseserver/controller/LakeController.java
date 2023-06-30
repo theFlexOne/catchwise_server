@@ -33,11 +33,14 @@ public class LakeController {
     public ResponseEntity<List<LakeMarkerDTO>> getLakeMarkers(
             @RequestParam("lat") Double lat,
             @RequestParam("lng") Double lng,
-            @RequestParam( defaultValue = "50000") Long range
+            @RequestParam( defaultValue = "50000") Long range,
+            @RequestParam(required = false, defaultValue = "100") Long limit
     ) throws Exception {
-        return ResponseEntity.ok(
-                lakeService.findLakeMarkersInRange(lng, lat, range)
-        );
+        // Cache the results
+        List<LakeMarkerDTO> lakeMarkerDTOList = lakeService.findLakeMarkersInRange(lng, lat, range);
+        log.info("lake count {}", lakeMarkerDTOList.size());
+        List<LakeMarkerDTO> limitedLakeMarkerDTOList = lakeMarkerDTOList.subList(0, Math.min(lakeMarkerDTOList.size(), limit.intValue()));
+        return ResponseEntity.ok(limitedLakeMarkerDTOList);
     }
 
     @GetMapping("/{id}/fish")

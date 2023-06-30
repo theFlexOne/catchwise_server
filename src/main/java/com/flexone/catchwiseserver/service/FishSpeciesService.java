@@ -35,12 +35,13 @@ public class FishSpeciesService {
     }
 
     public FishSpecies findByGenusAndSpecies(String genus, String species) {
-        return fishSpeciesRepository.findByGenusAndSpeciesAllIgnoreCase(genus, species);
+        return fishSpeciesRepository.findByGenusAndSpeciesAllIgnoreCase(genus, species).orElse(null);
     }
 
     public FishSpecies findByScientificName(String scientificName) {
         String[] genusAndSpecies = scientificName.split(" ");
-        return fishSpeciesRepository.findByGenusAndSpeciesAllIgnoreCase(genusAndSpecies[0], genusAndSpecies[1]);
+        if (genusAndSpecies.length != 2) throw new IllegalArgumentException("Invalid scientific name: " + scientificName);
+        return fishSpeciesRepository.findByGenusAndSpecies(genusAndSpecies[0], genusAndSpecies[1]).orElse(null);
     }
 
 }

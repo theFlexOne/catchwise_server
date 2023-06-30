@@ -36,7 +36,8 @@ public class LakeJSON {
   String county;
   String nearestTown;
   List<FishSpecies> fishSpecies;
-  Geometry geometry;
+  @JsonProperty("geoJson")
+  Feature feature;
   Double shorelineLength;
   Double area;
   Double maxDepth;

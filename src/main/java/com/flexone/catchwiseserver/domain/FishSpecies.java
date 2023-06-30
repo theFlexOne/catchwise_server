@@ -2,6 +2,7 @@ package com.flexone.catchwiseserver.domain;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -10,9 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
-@ToString
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Accessors(chain = true)
 @Table(name = "fish_species")
@@ -22,7 +21,7 @@ public class FishSpecies {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "genus")
@@ -45,17 +44,22 @@ public class FishSpecies {
     private List<String> commonNames;
 
     @ManyToMany(mappedBy = "fishSpecies")
+    @JsonIgnore
     private Set<Lake> lakes = new HashSet<>();
 
-    public String getScientificName() {
-        return this.genus + " " + this.species;
-    }
     public FishSpecies setScientificName(String scientificName) {
         String[] split = scientificName.split(" ");
-        if (split.length != 2) throw new IllegalArgumentException("Scientific name must be in format: Genus Species");
         this.genus = split[0];
         this.species = split[1];
         return this;
+    }
+    public String getScientificName() {
+        return this.genus + " " + this.species;
+    }
+
+    @Override
+    public String toString() {
+        return this.getScientificName();
     }
 
 }

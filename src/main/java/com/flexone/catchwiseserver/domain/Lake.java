@@ -3,13 +3,19 @@ package com.flexone.catchwiseserver.domain;
 
 import javax.persistence.*;
 
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,21 +42,22 @@ public class Lake {
   private String nearestTown;
 
   @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
+  @JsonSerialize(using = GeometrySerializer.class)
+  @JsonDeserialize(using = GeometryDeserializer.class)
   private MultiPolygon geometry;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  private County county;
-
-
-  @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+  @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
   @JoinTable(name = "lakes_fish_species",
-          joinColumns = @JoinColumn(name = "fish_species_id"),
-          inverseJoinColumns = @JoinColumn(name = "lake_id"))
+          joinColumns = @JoinColumn(name = "lake_id"),
+          inverseJoinColumns = @JoinColumn(name = "fish_species_id"))
   @Column(name = "fish_species")
-  private Set<FishSpecies> fishSpecies = new HashSet<>();
+  private List<FishSpecies> fishSpecies = new ArrayList<>();
 
   public Lake addFishSpecies(FishSpecies fishSpecies) {
     this.fishSpecies.add(fishSpecies);
     return this;
   }
+
+
+
 }

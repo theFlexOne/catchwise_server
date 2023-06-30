@@ -15,6 +15,7 @@ public class LakeMarkerDTO {
     private Long id;
     private String name;
     @Target(Point.class)
+    @JsonProperty("coordinates")
     private Coordinates coordinates;
     public LakeMarkerDTO setCoordinates(Point geometry) {
         this.coordinates = new Coordinates()

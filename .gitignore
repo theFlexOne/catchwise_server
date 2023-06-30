@@ -32,4 +32,5 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/data/
-/src/main/resources/data/
+#*.json
+#*.geojson
