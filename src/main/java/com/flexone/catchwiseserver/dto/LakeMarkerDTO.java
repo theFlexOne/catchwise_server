@@ -1,35 +1,24 @@
 package com.flexone.catchwiseserver.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hazelcast.internal.serialization.SerializableByConvention;
+import lombok.*;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.Target;
 import org.locationtech.jts.geom.Point;
 
+import java.io.Serializable;
+import java.util.Map;
+
 @Data
-@Accessors(chain = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class LakeMarkerDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
+public class LakeMarkerDTO implements Serializable{
+    Long lakeId;
+    String lakeName;
+    double[] coordinates;
+    double distance;
 
-    private Long id;
-    private String name;
-    @Target(Point.class)
-    @JsonProperty("coordinates")
-    private Coordinates coordinates;
-    public LakeMarkerDTO setCoordinates(Point geometry) {
-        this.coordinates = new Coordinates()
-                .setLatitude(String.valueOf(geometry.getY()))
-                .setLongitude(String.valueOf(geometry.getX()));
-        return this;
+    public LakeMarkerDTO(Long lakeId, String lakeName, double[] coordinates) {
+        this(lakeId, lakeName, coordinates, 0);
     }
-
-    @Data
-    @Accessors(chain = true)
-    static
-    class Coordinates {
-        private String latitude;
-        private String longitude;
-    }
-
 }

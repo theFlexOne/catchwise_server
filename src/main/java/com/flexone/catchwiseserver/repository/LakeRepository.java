@@ -1,6 +1,8 @@
 package com.flexone.catchwiseserver.repository;
 
 import com.flexone.catchwiseserver.domain.Lake;
+import com.flexone.catchwiseserver.domain.LakeMarker;
+import com.flexone.catchwiseserver.dto.LakeNameDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -17,16 +19,6 @@ public interface LakeRepository extends JpaRepository<Lake, Long> {
     List<Lake> findAllLakesInStateByStateName(String state);
 
     @Query(
-            value = "SELECT l.*, F1_Meters_To_Miles(St_Distance(l.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography)) as distance_in_miles " +
-                    "from lakes as l " +
-                    "WHERE ST_DWithin(ST_Centroid(l.geom)\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)\\:\\:geography, :meters) " +
-                    "AND l.name IS NOT NULL " +
-                    "ORDER BY distance_in_miles;",
-            nativeQuery = true
-    )
-    List<Lake> findAllLakesInRange(Double lng, Double lat, Long meters);
-
-    @Query(
             value = "SELECT l.* FROM public.lakes AS l " +
                     "INNER JOIN public.lakes_fish_species as lfs ON l.id = lfs.lake_id " +
                     "INNER JOIN public.fish_species AS fs ON fs.id = lfs.fish_species_id " +
@@ -38,6 +30,27 @@ public interface LakeRepository extends JpaRepository<Lake, Long> {
     List<Lake> findLakesInRangeByFish(Double lng, Double lat, Long miles, String fish);
 
 
+    @Query(value =
+            "SELECT lm.*, " +
+                    "F1_Meters_To_Miles(St_Distance(lm.geom, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326))) AS distance_in_miles " +
+                    "FROM lake_markers lm " +
+                    "WHERE ST_DWithin(lm.geom\\:\\:geography, ST_SetSRID(ST_MakePoint(:lng, :lat)\\:\\:geography, 4326), :meters) " +
+                    "AND lm.lake_name IS NOT NULL " +
+                    "ORDER BY distance_in_miles"
+            , nativeQuery = true)
+    List<LakeMarker> findAllLakeMarkersInRange(Double lng, Double lat, Long meters);
+
+    @Query(value = FIND_ALL_LAKE_NAMES, nativeQuery = true)
+    List<LakeNameProjection> findAllLakeNames(Double lng, Double lat);
+
+    // region QUERIES
+    String FIND_ALL_LAKE_NAMES = "select l.id, l.name, c.name as county, s.name as state " +
+            "from lakes l " +
+            "join counties c on c.id = l.county_id " +
+            "join states s on s.id = c.state_id " +
+            "where l.geom && ST_Expand(st_setsrid(st_makepoint(:lng, :lat), 4326), 100000) " +
+            "and l.name is not null;";
+    // endregion
 }
 
 

@@ -1,17 +1,22 @@
 package com.flexone.catchwiseserver.controller;
 
-import com.flexone.catchwiseserver.dto.FishSpeciesDTO;
+import com.flexone.catchwiseserver.domain.LakeMarker;
 import com.flexone.catchwiseserver.dto.LakeDTO;
-import com.flexone.catchwiseserver.dto.LakeFishResponseDTO;
 import com.flexone.catchwiseserver.dto.LakeMarkerDTO;
+import com.flexone.catchwiseserver.dto.LakeNameDTO;
+import com.flexone.catchwiseserver.mapper.LakeMarkerMapper;
 import com.flexone.catchwiseserver.service.FishSpeciesService;
+import com.flexone.catchwiseserver.service.LakeMarkerService;
 import com.flexone.catchwiseserver.service.LakeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 
 @RestController
@@ -21,7 +26,10 @@ import java.util.List;
 public class LakeController {
 
     final LakeService lakeService;
+    final LakeMarkerService lakeMarkerService;
     final FishSpeciesService fishSpeciesService;
+    final LakeMarkerMapper lakeMarkerMapper;
+
 
     @GetMapping("/{id}")
     public ResponseEntity<LakeDTO> getLakeById(@PathVariable("id") Long id) throws Exception {
@@ -29,25 +37,49 @@ public class LakeController {
         return ResponseEntity.ok(lakeDTO);
     }
 
-    @GetMapping("/markers")
-    public ResponseEntity<List<LakeMarkerDTO>> getLakeMarkers(
-            @RequestParam("lat") Double lat,
-            @RequestParam("lng") Double lng,
-            @RequestParam( defaultValue = "50000") Long range,
-            @RequestParam(required = false, defaultValue = "100") Long limit
-    ) throws Exception {
-        // Cache the results
-        List<LakeMarkerDTO> lakeMarkerDTOList = lakeService.findLakeMarkersInRange(lng, lat, range);
-        log.info("lake count {}", lakeMarkerDTOList.size());
-        List<LakeMarkerDTO> limitedLakeMarkerDTOList = lakeMarkerDTOList.subList(0, Math.min(lakeMarkerDTOList.size(), limit.intValue()));
-        return ResponseEntity.ok(limitedLakeMarkerDTOList);
+
+    @GetMapping("/{id}/marker")
+    public ResponseEntity<LakeMarkerDTO> getNearestLakeMarkerById(@PathVariable("id") Number id) throws Exception {
+        LakeMarker lakeMarker = lakeMarkerService.findByLakeId(id);
+        LakeMarkerDTO lakeMarkerDTO = lakeMarkerMapper.toDto(lakeMarker);
+        return ResponseEntity.ok(lakeMarkerDTO);
     }
 
-    @GetMapping("/{id}/fish")
-    public ResponseEntity<List<FishSpeciesDTO>> getLakeFishById(@PathVariable("id") Long id) throws Exception {
-        List<FishSpeciesDTO> lakeFishResponseDTOList = fishSpeciesService.findLakeFishById(id);
-        log.info("fish count {}", lakeFishResponseDTOList.size());
-        return ResponseEntity.ok(lakeFishResponseDTOList);
+
+    @GetMapping("/marker")
+    public ResponseEntity<LakeMarkerDTO> getNearestLakeMarker(
+            @RequestParam Double lat,
+            @RequestParam Double lng
+    ) throws Exception {
+        LakeMarkerDTO lakeMarkerDTO = lakeMarkerService.findNearestLakeMarker(lat, lng);
+        return ResponseEntity.ok(lakeMarkerDTO);
+    }
+
+
+    @GetMapping("/markers")
+    public ResponseEntity<List<LakeMarkerDTO>> getNearestLakeMarkers(
+            @RequestParam Double lat,
+            @RequestParam Double lng,
+            @RequestParam(defaultValue = "25") Integer miles,
+            @RequestParam(required = false, name = "fish") String fishSpecies
+    ) throws Exception {
+        List<LakeMarkerDTO> lakeMarkerDTOList = new ArrayList<>();
+        if (fishSpecies != null) {
+            lakeMarkerDTOList = lakeMarkerService.findAllLakeMarkersInRangeByFishSpecies(lng, lat, miles, fishSpecies);
+            return ResponseEntity.ok(lakeMarkerDTOList);
+        } else {
+            lakeMarkerDTOList = lakeMarkerService.findNearestLakeMarkers(lng, lat);
+            return ResponseEntity.ok(lakeMarkerDTOList);
+        }
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<LakeNameDTO>> getNearestLakeNames(
+            @RequestParam Double lat,
+            @RequestParam Double lng
+    ) {
+        List<LakeNameDTO> lakeNames = lakeService.findAllLakeNames(lng, lat);
+        return ResponseEntity.ok(lakeNames);
     }
 
 }

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.flexone.catchwiseserver.bootstrap.json.FishSpeciesJSON;
 import com.flexone.catchwiseserver.bootstrap.json.LakeJSON;
-import com.flexone.catchwiseserver.bootstrap.json.NewLakeJSON;
 import com.flexone.catchwiseserver.domain.County;
 import com.flexone.catchwiseserver.domain.FishSpecies;
 import com.flexone.catchwiseserver.domain.Lake;
@@ -23,7 +22,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
-import org.wololo.geojson.GeoJSON;
 import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.io.IOException;
@@ -34,7 +32,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class SeedData implements CommandLineRunner {
-
+//
     final LakeService lakeService;
     final StateService stateService;
     final CountyService countyService;
@@ -43,10 +41,10 @@ public class SeedData implements CommandLineRunner {
     static final ObjectMapper mapper = new ObjectMapper();
     static final GeoJSONReader reader = new GeoJSONReader();
     static final GeometryFactory geometryFactory = new GeometryFactory();
-
+//
     @Override
     public void run(String... args) throws Exception {
-
+        log.info("Nothing to seed yet");
 
 //        seedData();
     }
@@ -158,7 +156,6 @@ public class SeedData implements CommandLineRunner {
             return new Lake()
                     .setName(json.getName())
                     .setLocalId(json.getId())
-                    .setNearestTown(json.getNearestTown())
                     .setFishSpecies(fishSpeciesList)
                     .setGeometry((MultiPolygon) lakeGeometry);
         }).toList();

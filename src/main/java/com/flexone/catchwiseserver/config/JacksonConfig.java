@@ -1,6 +1,6 @@
 package com.flexone.catchwiseserver.config;
 
-import com.bedatadriven.jackson.datatype.jts.JtsModule;
+import com.flexone.catchwiseserver.util.JtsModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -7,11 +7,12 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface FishSpeciesMapper {
+public abstract class FishSpeciesMapper {
 
-    FishSpeciesDTO toDto(FishSpecies fishSpecies);
-    List<FishSpeciesDTO> toDtoList(List<FishSpecies> fishSpecies);
-    FishSpecies toEntity(FishSpeciesDTO fishSpeciesDTO);
-    List<FishSpecies> toEntityList(List<FishSpeciesDTO> fishSpeciesDTO);
+    public abstract FishSpeciesDTO toDto(FishSpecies fishSpecies);
+    public abstract List<FishSpeciesDTO> toDtoList(List<FishSpecies> fishSpeciesList);
+
+    public abstract FishSpecies toEntity(FishSpeciesDTO fishSpeciesDTO);
+    public abstract List<FishSpecies> toEntityList(List<FishSpeciesDTO> fishSpeciesDTOList);
 
 }

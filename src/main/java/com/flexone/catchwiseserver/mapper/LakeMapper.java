@@ -1,48 +1,41 @@
 package com.flexone.catchwiseserver.mapper;
 
-import com.flexone.catchwiseserver.domain.FishSpecies;
 import com.flexone.catchwiseserver.domain.Lake;
 import com.flexone.catchwiseserver.dto.LakeDTO;
-import com.flexone.catchwiseserver.dto.LakeFishResponseDTO;
-import com.flexone.catchwiseserver.dto.LakeMarkerDTO;
-import com.flexone.catchwiseserver.dto.LakeShortDTO;
-import org.locationtech.jts.algorithm.Centroid;
-import org.locationtech.jts.geom.Coordinate;
+import com.flexone.catchwiseserver.dto.LakeNameDTO;
+import com.flexone.catchwiseserver.repository.LakeNameProjection;
+import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR, uses = {FishSpeciesMapper.class})
+@RequiredArgsConstructor
 public abstract class LakeMapper {
 
     final static GeometryFactory geometryFactory = new GeometryFactory();
 
+    @Autowired
+    protected FishSpeciesMapper fishSpeciesMapper;
+
     public LakeDTO toDto(Lake lake) {
         return new LakeDTO()
                 .setId(lake.getId())
-                .setName(lake.getName());
+                .setName(lake.getName())
+                .setLocalId(lake.getLocalId())
+                .setGeometry(lake.getGeometry())
+                .setFishSpecies(fishSpeciesMapper.toDtoList(lake.getFishSpecies()));
     };
+
     public abstract List<LakeDTO> toDtoList(List<Lake> lakeList);
 
     public abstract Lake toEntity(LakeDTO lakeDTO);
+
     public abstract List<Lake> toEntityList(List<LakeDTO> lakeDTOList);
-
-
-
-    public LakeMarkerDTO toMarkerDto(Lake lake) {
-        Coordinate centroid = new Centroid(lake.getGeometry()).getCentroid();
-        Point point = geometryFactory.createPoint(centroid);
-        return new LakeMarkerDTO()
-                .setId(lake.getId())
-                .setName(lake.getName())
-                .setCoordinates(point);
+    
+    public List<LakeNameDTO> toLakeNameDtoList(List<LakeNameProjection> lakeNames) {
+        return lakeNames.stream().map(lake -> new LakeNameDTO(lake.getId(), lake.getName(), lake.getState(), lake.getCounty())).toList();
     }
-
-    public List<LakeMarkerDTO> toMarkerDtoList(List<Lake> lakesList) {
-        return lakesList.stream().map(this::toMarkerDto).toList();
-    }
-
 }
