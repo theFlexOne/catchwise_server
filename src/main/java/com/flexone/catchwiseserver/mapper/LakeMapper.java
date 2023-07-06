@@ -2,8 +2,8 @@ package com.flexone.catchwiseserver.mapper;
 
 import com.flexone.catchwiseserver.domain.Lake;
 import com.flexone.catchwiseserver.dto.LakeDTO;
-import com.flexone.catchwiseserver.dto.LakeNameDTO;
-import com.flexone.catchwiseserver.repository.LakeNameProjection;
+import com.flexone.catchwiseserver.dto.LakeMarkerDTO;
+import com.flexone.catchwiseserver.repository.LakeMarkerProjection;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.mapstruct.*;
@@ -27,15 +27,30 @@ public abstract class LakeMapper {
                 .setLocalId(lake.getLocalId())
                 .setGeometry(lake.getGeometry())
                 .setFishSpecies(fishSpeciesMapper.toDtoList(lake.getFishSpecies()));
-    };
+    }
+
+    ;
 
     public abstract List<LakeDTO> toDtoList(List<Lake> lakeList);
 
     public abstract Lake toEntity(LakeDTO lakeDTO);
 
     public abstract List<Lake> toEntityList(List<LakeDTO> lakeDTOList);
-    
-    public List<LakeNameDTO> toLakeNameDtoList(List<LakeNameProjection> lakeNames) {
-        return lakeNames.stream().map(lake -> new LakeNameDTO(lake.getId(), lake.getName(), lake.getState(), lake.getCounty())).toList();
+
+    public List<LakeMarkerDTO> toLakeMarkerDtoList(List<LakeMarkerProjection> lakeMarkers) {
+        return lakeMarkers.stream().map(lake -> {
+            LakeMarkerDTO lakeMarkerDTO = new LakeMarkerDTO();
+            double[] coordinates = new double[2];
+            coordinates[0] = lake.getMarker().getX();
+            coordinates[1] = lake.getMarker().getY();
+
+            lakeMarkerDTO.setLakeId(lake.getLakeId());
+            lakeMarkerDTO.setLakeName(lake.getLakeName());
+            lakeMarkerDTO.setCountyName(lake.getCountyName());
+            lakeMarkerDTO.setStateName(lake.getStateName());
+            lakeMarkerDTO.setCoordinates(coordinates);
+
+            return lakeMarkerDTO;
+        }).toList();
     }
 }

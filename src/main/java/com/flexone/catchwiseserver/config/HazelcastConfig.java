@@ -1,10 +1,7 @@
 package com.flexone.catchwiseserver.config;
 
-import com.flexone.catchwiseserver.domain.LakeMarker;
 import com.flexone.catchwiseserver.dto.LakeMarkerDTO;
-import com.flexone.catchwiseserver.dto.LakeNameDTO;
 import com.flexone.catchwiseserver.serializer.LakeMarkerSerializer;
-import com.flexone.catchwiseserver.serializer.LakeNameSerializer;
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -34,13 +31,9 @@ public class HazelcastConfig {
         SerializerConfig lakeMarkerSerializerConfig = new SerializerConfig()
                 .setImplementation(new LakeMarkerSerializer())
                 .setTypeClass(LakeMarkerDTO.class);
-        SerializerConfig lakeNameSerializerConfig = new SerializerConfig()
-                .setImplementation(new LakeNameSerializer())
-                .setTypeClass(LakeNameDTO.class);
 
         config.getSerializationConfig()
-                .addSerializerConfig(lakeMarkerSerializerConfig)
-                .addSerializerConfig(lakeNameSerializerConfig);
+                .addSerializerConfig(lakeMarkerSerializerConfig);
 
         return config;
     }
@@ -55,8 +48,4 @@ public class HazelcastConfig {
         return hazelcastInstance.getMap("lakeMarkers");
     }
 
-    @Bean
-    public IMap<String, List<LakeNameDTO>> lakeNameCache(HazelcastInstance hazelcastInstance) {
-        return hazelcastInstance.getMap("lakeNames");
-    }
 }

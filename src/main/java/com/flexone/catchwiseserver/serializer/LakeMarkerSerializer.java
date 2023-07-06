@@ -1,42 +1,42 @@
 package com.flexone.catchwiseserver.serializer;
 
-import com.flexone.catchwiseserver.domain.LakeMarker;
 import com.flexone.catchwiseserver.dto.LakeMarkerDTO;
+import com.flexone.catchwiseserver.repository.LakeMarkerProjection;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.StreamSerializer;
 
 import java.io.IOException;
-import java.util.List;
 
-public class LakeMarkerSerializer implements StreamSerializer<List<LakeMarkerDTO>> {
+public class LakeMarkerSerializer implements StreamSerializer {
     @Override
-    public void write(ObjectDataOutput out, List<LakeMarkerDTO> lakeMarkerDTOS) throws IOException {
-        out.writeInt(lakeMarkerDTOS.size());
-        for (LakeMarkerDTO lakeMarkerDTO : lakeMarkerDTOS) {
-            out.writeLong(lakeMarkerDTO.getLakeId());
-            out.writeUTF(lakeMarkerDTO.getLakeName());
-            out.writeDoubleArray(lakeMarkerDTO.getCoordinates());
-            if (lakeMarkerDTO.getDistance() > 0)
-                out.writeDouble(lakeMarkerDTO.getDistance());
-        }
+    public void write(ObjectDataOutput out, Object object) throws IOException {
+        LakeMarkerProjection lakeMarkerProjection = (LakeMarkerProjection) object;
+
+        double[] coordinates = new double[2];
+        coordinates[0] = lakeMarkerProjection.getMarker().getX();
+        coordinates[1] = lakeMarkerProjection.getMarker().getY();
+
+        out.writeLong(lakeMarkerProjection.getLakeId());
+        out.writeUTF(lakeMarkerProjection.getLakeName());
+        out.writeUTF(lakeMarkerProjection.getCountyName());
+        out.writeUTF(lakeMarkerProjection.getStateName());
+        out.writeDoubleArray(coordinates);
     }
 
     @Override
-    public List<LakeMarkerDTO> read(ObjectDataInput in) throws IOException {
-        int size = in.readInt();
-        for (int i = 0; i < size; i++) {
-            Long lakeId = in.readLong();
-            String lakeName = in.readUTF();
-            double[] coordinates = in.readDoubleArray();
-            double distance = in.readDouble();
-            return List.of(new LakeMarkerDTO(lakeId, lakeName, coordinates, distance));
-        }
-        return null;
+    public Object read(ObjectDataInput in) throws IOException {
+        LakeMarkerDTO lakeMarkerDTO = new LakeMarkerDTO();
+        lakeMarkerDTO.setLakeId(in.readLong());
+        lakeMarkerDTO.setLakeName(in.readUTF());
+        lakeMarkerDTO.setCountyName(in.readUTF());
+        lakeMarkerDTO.setStateName(in.readUTF());
+        lakeMarkerDTO.setCoordinates(in.readDoubleArray());
+        return lakeMarkerDTO;
     }
 
     @Override
     public int getTypeId() {
-        return 1;
+        return 2;
     }
 }

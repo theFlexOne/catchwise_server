@@ -11,14 +11,12 @@ import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
 public class LakeMarkerDTO implements Serializable{
     Long lakeId;
     String lakeName;
+    String countyName;
+    String stateName;
     double[] coordinates;
     double distance;
 
-    public LakeMarkerDTO(Long lakeId, String lakeName, double[] coordinates) {
-        this(lakeId, lakeName, coordinates, 0);
-    }
 }
