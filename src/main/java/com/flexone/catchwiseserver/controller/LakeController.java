@@ -30,18 +30,24 @@ public class LakeController {
     @GetMapping("/markers")
     public ResponseEntity<List<LakeMarkerDTO>> getAllLakeMarkers(
             @RequestParam(value = "lng", required = false) Double lng,
-            @RequestParam(value = "lat", required = false) Double lat
+            @RequestParam(value = "lat", required = false) Double lat,
+            @RequestParam(value = "radius", required = false) Double radius
     ) {
-        List<LakeMarkerDTO> lakeDTOList = lakeService.findAllLakeMarkers(lng, lat);
+        if (radius == null) radius = 1.0;
+
+        List<LakeMarkerDTO> lakeDTOList = lakeService.findAllLakeMarkers(lng, lat, radius);
         return ResponseEntity.ok(lakeDTOList);
     }
 
     @GetMapping("/names")
     public ResponseEntity<List<LakeNameDTO>> getAllLakeNames(
             @RequestParam Double lng,
-            @RequestParam Double lat
+            @RequestParam Double lat,
+            @RequestParam(required = false) Double radius
     ) {
-        List<LakeNameDTO> lakeNames = lakeService.findLakeNames(lng, lat);
+        if (radius == null) radius = 5.0;
+
+        List<LakeNameDTO> lakeNames = lakeService.findLakeNames(lng, lat, radius);
         return ResponseEntity.ok(lakeNames);
     }
 

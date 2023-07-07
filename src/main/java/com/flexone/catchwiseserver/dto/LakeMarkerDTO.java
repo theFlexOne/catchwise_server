@@ -19,9 +19,6 @@ public class LakeMarkerDTO {
 
     String name;
 
-    Coordinate[] coordinates;
+    Double[] coordinates = new Double[2];
 
-    public Double[] getCoordinates() {
-        return new Double[]{coordinates[0].x, coordinates[0].y};
-    }
 }

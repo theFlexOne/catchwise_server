@@ -1,10 +1,12 @@
 package com.flexone.catchwiseserver.service;
 
 import com.flexone.catchwiseserver.domain.Lake;
+import com.flexone.catchwiseserver.domain.LakeMarker;
+import com.flexone.catchwiseserver.domain.LakeName;
 import com.flexone.catchwiseserver.dto.*;
 import com.flexone.catchwiseserver.mapper.LakeMapper;
-import com.flexone.catchwiseserver.repository.LakeMarkerView;
-import com.flexone.catchwiseserver.repository.LakeNameView;
+import com.flexone.catchwiseserver.repository.LakeMarkerRepository;
+import com.flexone.catchwiseserver.repository.LakeNameRepository;
 import com.flexone.catchwiseserver.repository.LakeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,8 @@ import java.util.List;
 public class LakeService {
 
     final LakeRepository lakeRepository;
-    final LakeMapper lakeMapper;
+    final LakeNameRepository lakeNameRepository;
+    final LakeMarkerRepository lakeMarkerRepository;
 
     public LakeDTO findById(Long id) throws Exception {
         Lake lake = lakeRepository.findById(id).orElseThrow(() -> new Exception("Lake not found"));
@@ -46,36 +49,28 @@ public class LakeService {
 //    }
 
 
+    public List<LakeMarkerDTO> findAllLakeMarkers(Double lng, Double lat, Double radius) {
+        List<LakeMarker> lakeMarkerList = lakeMarkerRepository.findAllMarkersInRadius(lng.intValue(), lat.intValue(), radius);
+        return lakeMarkerList.stream().map(lakeMarker -> {
+            return new LakeMarkerDTO()
+                    .setId(lakeMarker.getId())
+                    .setName(lakeMarker.getName())
+                    .setCoordinates(lakeMarker.getCoords());
+        }).toList();
+    }
     public List<LakeMarkerDTO> findAllLakeMarkers(Double lng, Double lat) {
-        List<Lake> lakeList = lakeRepository.findAllLakeMarkers(lng.intValue(), lat.intValue());
-        return lakeList.stream().map(lake -> {
-            return new LakeMarkerDTO()
-                    .setId(lake.getId())
-                    .setName(lake.getName())
-                    .setCoordinates(lake.getMarker().getCoordinates());
-        }).toList();
+        return findAllLakeMarkers(lng, lat, 1.0);
     }
 
-    public List<LakeNameDTO> findLakeNames(Double lng, Double lat) {
-        List<LakeNameView> lakeNameViews = lakeRepository.findAllLakeNames(lng.intValue(), lat.intValue());
 
-        return lakeNameViews.stream().map(lakeNameView -> {
+    public List<LakeNameDTO> findLakeNames(Double lng, Double lat, Double radius) {
+        List<LakeName> lakeNameList = lakeNameRepository.findAllLakeNamesInRadius(lng.intValue(), lat.intValue(), radius);
+        return lakeNameList.stream().map(lakeName -> {
             return new LakeNameDTO()
-                    .setId(lakeNameView.getId())
-                    .setName(lakeNameView.getName())
-                    .setCountyName(lakeNameView.getCountyName())
-                    .setStateName(lakeNameView.getStateName());
-        }).toList();
-
-    }
-
-    public List<LakeMarkerDTO> findAllLakeMarkers2(Double lng, Double lat) {
-        List<Lake> lakeList = lakeRepository.findAllLakeMarkers(lng.intValue(), lat.intValue());
-        return lakeList.stream().map(lake -> {
-            return new LakeMarkerDTO()
-                    .setId(lake.getId())
-                    .setName(lake.getName())
-                    .setCoordinates(lake.getMarker().getCoordinates());
+                    .setId(lakeName.getId())
+                    .setName(lakeName.getName())
+                    .setCounty(lakeName.getCounty())
+                    .setState(lakeName.getState());
         }).toList();
     }
 }

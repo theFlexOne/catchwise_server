@@ -9,7 +9,7 @@ public class LakeNameDTO {
 
     Long id;
     String name;
-    String countyName;
-    String stateName;
+    String county;
+    String state;
 
 }
