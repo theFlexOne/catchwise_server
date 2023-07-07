@@ -33,6 +33,10 @@ public class LakeDTO {
     @JsonSerialize(using = GeometrySerializer.class)
     private MultiPolygon geometry;
 
+    @Column(name = "marker", columnDefinition = "geometry(Point,4326)")
+    @JsonSerialize(using = GeometrySerializer.class)
+    private Geometry marker;
+
     private List<FishSpeciesDTO> fishSpecies = new ArrayList<>();
 
 }

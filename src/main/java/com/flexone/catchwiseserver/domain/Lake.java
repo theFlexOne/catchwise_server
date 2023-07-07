@@ -46,6 +46,11 @@ public class Lake {
     @JsonSerialize(using = GeometrySerializer.class)
     private MultiPolygon geometry;
 
+    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "marker")
+    @JsonSerialize(using = GeometrySerializer.class)
+    private Point marker;
+
+
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "lakes_fish_species",
             joinColumns = @JoinColumn(name = "lake_id"),
@@ -57,6 +62,8 @@ public class Lake {
         this.fishSpecies.add(fishSpecies);
         return this;
     }
+
+
 
 
 }

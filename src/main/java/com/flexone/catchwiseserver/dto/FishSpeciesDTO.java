@@ -1,8 +1,10 @@
 package com.flexone.catchwiseserver.dto;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class FishSpeciesDTO {
     private Long id;
     private String name;

@@ -1,12 +1,9 @@
 package com.flexone.catchwiseserver.util;
 
-import com.flexone.catchwiseserver.domain.LakeMarker;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Coordinate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 

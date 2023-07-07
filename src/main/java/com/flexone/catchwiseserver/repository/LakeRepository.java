@@ -8,14 +8,25 @@ import java.util.List;
 
 public interface LakeRepository extends JpaRepository<Lake, Long> {
 
-    // region QUERIES
-    final static String FIND_ALL_LAKE_MARKERS_IN_RANGE =
-            "SELECT lmv.* FROM lake_markers_view lmv " +
-                    "WHERE lmv.marker && ST_MakeEnvelope(:lng - 2, :lat - 2, :lng + 3, :lat + 3, 4326);";
+    @Query(value =
+            "select l.* from lakes l " +
+                    "where l.name is not null " +
+                    "and st_dwithin(l.marker, st_setsrid(st_makepoint(:lng, :lat), 4326), 1);",
+            nativeQuery = true)
+    List<Lake> findAllLakeMarkers(Integer lng, Integer lat);
 
-    // endregion
+    @Query(value =
+            "select l.id lakeId, l.name lakeName, l.marker marker from lakes l " +
+                    "where l.name is not null " +
+                    "and st_dwithin(l.marker, st_setsrid(st_makepoint(:lng, :lat), 4326), 1);",
+            nativeQuery = true)
+    List<LakeMarkerView> findAllLakeMarkers2(Integer lng, Integer lat);
 
-    @Query(value = FIND_ALL_LAKE_MARKERS_IN_RANGE, nativeQuery = true)
-    List<LakeMarkerProjection> findAllLakeMarkersInRange(int lng, int lat);
+    @Query(value = "select l.id, l.name name, c.name countyName, s.name stateName from lakes l " +
+            "left join counties c on c.id = l.county_id " +
+            "left join states s on s.id = c.state_id " +
+            "where st_dwithin(c.geom, st_setsrid(st_makePoint(:lng, :lat), 4326), 5);",
+            nativeQuery = true)
+    List<LakeNameView> findAllLakeNames(Integer lng, Integer lat);
 
 }
