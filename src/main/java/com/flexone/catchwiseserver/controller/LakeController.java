@@ -36,6 +36,7 @@ public class LakeController {
         if (radius == null) radius = 1.0;
 
         List<LakeMarkerDTO> lakeDTOList = lakeService.findAllLakeMarkers(lng, lat, radius);
+        log.info("Returning " + lakeDTOList.size() + " lakes");
         return ResponseEntity.ok(lakeDTOList);
     }
 

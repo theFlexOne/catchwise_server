@@ -50,13 +50,18 @@ public class LakeService {
 
 
     public List<LakeMarkerDTO> findAllLakeMarkers(Double lng, Double lat, Double radius) {
+        log.info("Fetching Markers in radius: " + radius + " from coordinates: " + lng + ", " + lat);
         List<LakeMarker> lakeMarkerList = lakeMarkerRepository.findAllMarkersInRadius(lng.intValue(), lat.intValue(), radius);
-        return lakeMarkerList.stream().map(lakeMarker -> {
+        log.info("Markers found: " + lakeMarkerList.size());
+        log.info("Mapping to DTO");
+        List<LakeMarkerDTO> lakeMarkerDTOList = lakeMarkerList.stream().map(lakeMarker -> {
             return new LakeMarkerDTO()
                     .setId(lakeMarker.getId())
                     .setName(lakeMarker.getName())
                     .setCoordinates(lakeMarker.getCoords());
         }).toList();
+        log.info("Returning DTO");
+        return lakeMarkerDTOList;
     }
     public List<LakeMarkerDTO> findAllLakeMarkers(Double lng, Double lat) {
         return findAllLakeMarkers(lng, lat, 1.0);
