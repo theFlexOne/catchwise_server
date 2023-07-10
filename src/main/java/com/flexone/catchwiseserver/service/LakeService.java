@@ -42,12 +42,12 @@ public class LakeService {
                 .setFishSpecies(fishSpeciesDTOList);
     }
 
-//    public List<LakeMarkerDTO> findAllLakeMarkersInRange(int lng, int lat) {
-//        List<LakeMarkerProjection> lakeMarkerProjections = lakeRepository.findAllLakeMarkersInRange(lng, lat);
-//        log.info("Projections: " + lakeMarkerProjections);
-//        return lakeMapper.toMarkerDtoList(lakeMarkerProjections);
-//    }
-
+    public Lake findByLocalId(String localLakeId) {
+        return lakeRepository.findByLocalId(localLakeId).or(() -> {
+            log.info("Lake not found");
+            return null;
+        }).orElseThrow();
+    }
 
     public List<LakeMarkerDTO> findAllLakeMarkers(Double lng, Double lat, Double radius) {
         log.info("Fetching Markers in radius: " + radius + " from coordinates: " + lng + ", " + lat);
@@ -78,4 +78,5 @@ public class LakeService {
                     .setState(lakeName.getState());
         }).toList();
     }
+
 }

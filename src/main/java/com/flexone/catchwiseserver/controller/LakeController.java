@@ -54,6 +54,7 @@ public class LakeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LakeDTO> getLakeById(@PathVariable("id") Long id) throws Exception {
+        log.info("Getting lake with id " + id);
         LakeDTO lakeDTO = lakeService.findById(id);
         return ResponseEntity.ok(lakeDTO);
     }

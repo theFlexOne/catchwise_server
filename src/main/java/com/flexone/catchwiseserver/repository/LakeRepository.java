@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LakeRepository extends JpaRepository<Lake, Long> {
 
@@ -16,4 +17,5 @@ public interface LakeRepository extends JpaRepository<Lake, Long> {
     List<Lake> findAllLakeMarkers(Integer lng, Integer lat);
 
 
+    Optional<Lake> findByLocalId(String localLakeId);
 }

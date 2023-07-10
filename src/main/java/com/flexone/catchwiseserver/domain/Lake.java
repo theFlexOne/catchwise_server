@@ -3,19 +3,15 @@ package com.flexone.catchwiseserver.domain;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.flexone.catchwiseserver.serializer.GeometrySerializer;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -46,9 +42,11 @@ public class Lake {
     @JsonSerialize(using = GeometrySerializer.class)
     private MultiPolygon geometry;
 
-    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "marker")
-    @JsonSerialize(using = GeometrySerializer.class)
-    private Point marker;
+    @OneToOne(cascade = CascadeType.ALL)
+    private MapMarker marker;
+
+    @OneToMany(mappedBy = "lake", cascade = CascadeType.ALL)
+    private List<WaterAccess> waterAccessList = new ArrayList<>();
 
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
@@ -57,6 +55,10 @@ public class Lake {
             inverseJoinColumns = @JoinColumn(name = "fish_species_id"))
     @Column(name = "fish_species")
     private List<FishSpecies> fishSpecies = new ArrayList<>();
+
+    public Point getMarker() {
+        return marker.getGeometry();
+    }
 
     public Lake addFishSpecies(FishSpecies fishSpecies) {
         this.fishSpecies.add(fishSpecies);
