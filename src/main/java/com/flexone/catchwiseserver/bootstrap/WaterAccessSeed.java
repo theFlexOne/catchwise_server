@@ -1,7 +1,6 @@
 package com.flexone.catchwiseserver.bootstrap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flexone.catchwiseserver.bootstrap.json.WaterAccessJSON.WaterAccessPropertiesJSON;
 import com.flexone.catchwiseserver.domain.Lake;
 import com.flexone.catchwiseserver.domain.MapMarker;
 import com.flexone.catchwiseserver.domain.MapMarkerType;
