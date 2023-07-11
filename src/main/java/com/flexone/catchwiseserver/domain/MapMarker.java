@@ -18,12 +18,14 @@ import javax.persistence.*;
 public class MapMarker {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "map_marker_type_id")
     private MapMarkerType type = new MapMarkerType();
 
-    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "marker")
+    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
     @JsonSerialize(using = GeometrySerializer.class)
     private Point geometry;
 

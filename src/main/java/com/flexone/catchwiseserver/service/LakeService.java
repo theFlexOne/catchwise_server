@@ -3,6 +3,7 @@ package com.flexone.catchwiseserver.service;
 import com.flexone.catchwiseserver.domain.Lake;
 import com.flexone.catchwiseserver.domain.LakeMarker;
 import com.flexone.catchwiseserver.domain.LakeName;
+import com.flexone.catchwiseserver.domain.MapMarker;
 import com.flexone.catchwiseserver.dto.*;
 import com.flexone.catchwiseserver.mapper.LakeMapper;
 import com.flexone.catchwiseserver.repository.LakeMarkerRepository;
@@ -43,10 +44,7 @@ public class LakeService {
     }
 
     public Lake findByLocalId(String localLakeId) {
-        return lakeRepository.findByLocalId(localLakeId).or(() -> {
-            log.info("Lake not found");
-            return null;
-        }).orElseThrow();
+        return lakeRepository.findByLocalId(localLakeId).orElse(null);
     }
 
     public List<LakeMarkerDTO> findAllLakeMarkers(Double lng, Double lat, Double radius) {
@@ -79,4 +77,17 @@ public class LakeService {
         }).toList();
     }
 
+    public void save(Lake lake) {
+        try {
+
+        lakeRepository.save(lake);
+        } catch (Exception e) {
+            log.error("Error saving lake: " + lake.getName());
+            log.error(e.getMessage());
+        }
+    }
+
+    public Lake findByMapMarker(MapMarker marker) {
+        return lakeRepository.findByMapMarkerCoordinates(marker.getGeometry().getX(), marker.getGeometry().getY()).orElse(null);
+    }
 }

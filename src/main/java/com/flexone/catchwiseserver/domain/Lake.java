@@ -43,9 +43,10 @@ public class Lake {
     private MultiPolygon geometry;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "map_marker_id", referencedColumnName = "id")
     private MapMarker marker;
 
-    @OneToMany(mappedBy = "lake", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "lake", cascade = CascadeType.MERGE)
     private List<WaterAccess> waterAccessList = new ArrayList<>();
 
 

@@ -40,8 +40,10 @@ public class FishSpecies {
     private String locationMapImgUrl;
 
     @ElementCollection
-    @CollectionTable(name = "fish_species_common_names", joinColumns = @JoinColumn(name = "fish_species_id"))
-    private List<String> commonNames;
+    @CollectionTable(name = "fish_species_common_names",
+            joinColumns = @JoinColumn(name = "fish_species_id"))
+    @Column(name = "common_name")
+    private List<String> commonName;
 
     @ManyToMany(mappedBy = "fishSpecies")
     @JsonIgnore

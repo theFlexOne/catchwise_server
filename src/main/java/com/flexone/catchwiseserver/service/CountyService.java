@@ -40,4 +40,8 @@ public class CountyService {
     }
     return foundCounty;
   }
+
+  public County findById(Long countyId) {
+    return countyRepository.findById(countyId).orElseThrow();
+  }
 }

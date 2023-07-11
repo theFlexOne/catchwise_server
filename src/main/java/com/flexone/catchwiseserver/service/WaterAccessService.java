@@ -5,6 +5,8 @@ import com.flexone.catchwiseserver.repository.WaterAccessRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class WaterAccessService {
@@ -15,4 +17,7 @@ public class WaterAccessService {
         return waterAccessRepository.save(waterAccess);
     }
 
+    public void saveAll(List<WaterAccess> waterAccesses) {
+        waterAccessRepository.saveAll(waterAccesses);
+    }
 }

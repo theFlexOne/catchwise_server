@@ -18,4 +18,9 @@ public interface LakeRepository extends JpaRepository<Lake, Long> {
 
 
     Optional<Lake> findByLocalId(String localLakeId);
+
+    @Query(value = "select l.* from lakes l " +
+            "left join map_markers mm on mm.id = l.map_marker_id " +
+            "where st_equals(mm.geom, st_setsrid(st_makepoint(:lng, :lat), 4326));", nativeQuery = true)
+    Optional<Lake> findByMapMarkerCoordinates(Double lng, Double lat);
 }
