@@ -25,7 +25,7 @@ public class LakesSeed2 implements CommandLineRunner {
     private final static ObjectMapper mapper = new ObjectMapper();
     @Override
     public void run(String... args) throws Exception {
-        seed();
+//        seed();
     }
 
     private void seed() throws IOException {

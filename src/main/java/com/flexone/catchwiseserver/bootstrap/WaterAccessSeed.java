@@ -31,7 +31,7 @@ import java.util.Map;
 @Slf4j
 @Order(2)
 public class WaterAccessSeed implements CommandLineRunner {
-    final static Path waterAccessPath = Paths.get("src", "main", "resources", "water_access.geojson");
+    final static Path waterAccessPath = Paths.get("src", "main", "resources", "data", "water_access.geojson");
 
     final static ObjectMapper mapper = new ObjectMapper();
     final static GeoJSONReader reader = new GeoJSONReader();

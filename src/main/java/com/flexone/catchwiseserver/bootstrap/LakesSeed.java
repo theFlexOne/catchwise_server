@@ -31,7 +31,7 @@ import java.util.List;
 @Order(1)
 public class LakesSeed implements CommandLineRunner {
 
-    final static Path waterAccessPath = Paths.get("src", "main", "resources", "NewAllLakes.json");
+    final static Path waterAccessPath = Paths.get("src", "main", "resources", "data", "NewAllLakes.json");
     final static ObjectMapper mapper = new ObjectMapper();
     final static GeometryFactory geometryFactory = new GeometryFactory();
     static final GeoJSONReader reader = new GeoJSONReader();
