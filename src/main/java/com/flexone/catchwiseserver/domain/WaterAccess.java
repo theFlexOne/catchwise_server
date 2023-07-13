@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name ="water_access")
+@Table(name ="water_accesses")
 @NoArgsConstructor
 @Accessors(chain = true)
 public class WaterAccess {

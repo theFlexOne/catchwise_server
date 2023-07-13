@@ -18,7 +18,7 @@ public class CountyService {
 
 
   public Optional<County> findByFipsCode(String fipsCode) {
-    return countyRepository.findByFipsCode(fipsCode);
+    return countyRepository.findByFips(fipsCode);
   }
 
 
@@ -44,4 +44,31 @@ public class CountyService {
   public County findById(Long countyId) {
     return countyRepository.findById(countyId).orElseThrow();
   }
+
+  public County findByFips(String countyFips) {
+    countyFips = padLeft(countyFips, '0', 3);
+    Optional<County> county = countyRepository.findByFips(countyFips);
+    if (county.isEmpty()) {
+      log.info("County not found: " + countyFips);
+    }
+    return county.orElse(null);
+  }
+
+  public County findByCountyNameAndStateName(String countyName, String stateName) {
+    Optional<County> county = countyRepository.findByCountyNameAndStateName(countyName, stateName);
+    if (county.isEmpty()) {
+      log.error("County not found: " + countyName + ", " + stateName);
+    }
+    return county.orElse(null);
+  }
+
+  private static String padLeft(String input, char padChar, int length) {
+    String output = input;
+    while (output.length() < length) {
+      output = padChar + output;
+    }
+    return output;
+  }
+
+
 }

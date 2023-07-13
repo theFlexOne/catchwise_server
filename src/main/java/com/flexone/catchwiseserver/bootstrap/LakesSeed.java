@@ -60,7 +60,9 @@ public class LakesSeed implements CommandLineRunner {
                     .setType(mapMarkerService.findTypeById(1));
             lake = lakeService.findByMapMarker(marker);
             if (lake != null) return;
-            County county = countyService.findById(lakeJSON.getCountyId().longValue());
+
+            County county = countyService.findByCountyNameAndStateName(lakeJSON.getCounty(), "Minnesota");
+
             lake = new Lake()
                     .setLocalId(lakeJSON.getId())
                     .setName(lakeJSON.getName())
@@ -70,5 +72,6 @@ public class LakesSeed implements CommandLineRunner {
             lakeService.save(lake);
         });
     }
+
 
 }

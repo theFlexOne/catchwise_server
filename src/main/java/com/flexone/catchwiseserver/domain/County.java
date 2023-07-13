@@ -29,7 +29,7 @@ public class County {
   private String name;
 
   @Column(name = "fips")
-  private String fipsCode;
+  private String fips;
 
   @Column(name = "ansi")
   private String ansiCode;
