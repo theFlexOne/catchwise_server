@@ -36,8 +36,8 @@ public class State {
   @Column(name = "fips")
   private String fipsCode;
 
-  @Column(name = "ansi")
-  private String ansiCode;
+  @Column(name = "gnis_id")
+  private String gnisId;
 
   @Column(columnDefinition = "GEOMETRY(MULTIPOLYGON, 4326)", name = "geom")
   @JsonSerialize(using = GeometrySerializer.class)

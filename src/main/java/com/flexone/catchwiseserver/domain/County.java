@@ -31,8 +31,8 @@ public class County {
   @Column(name = "fips")
   private String fips;
 
-  @Column(name = "ansi")
-  private String ansiCode;
+  @Column(name = "gnis_id")
+  private String gnisId;
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
   @JoinColumn(name = "state_id", nullable = false)

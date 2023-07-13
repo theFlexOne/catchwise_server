@@ -65,7 +65,7 @@ public class StatesAndCountiesSeed implements CommandLineRunner {
                         .setName(stateFeature.getProperties().get("Name").toString())
                         .setAbbreviation(stateFeature.getProperties().get("STUSPS").toString())
                         .setFipsCode(stateFeature.getProperties().get("STATEFP").toString())
-                        .setAnsiCode(stateFeature.getProperties().get("STATENS").toString())
+                        .setGnisId(stateFeature.getProperties().get("STATENS").toString())
                         .setGeometry(stateGeometry);
 
                 stateService.save(state);
@@ -75,7 +75,7 @@ public class StatesAndCountiesSeed implements CommandLineRunner {
             County county = new County()
                     .setName(countyFeature.getProperties().get("Name").toString())
                     .setFips(countyFeature.getProperties().get("COUNTYFP").toString())
-                    .setAnsiCode(countyFeature.getProperties().get("COUNTYNS").toString())
+                    .setGnisId(countyFeature.getProperties().get("COUNTYNS").toString())
                     .setState(state)
                     .setGeometry(countyGeometry);
 

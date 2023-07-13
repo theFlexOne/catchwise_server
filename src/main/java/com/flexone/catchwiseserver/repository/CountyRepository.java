@@ -15,6 +15,7 @@ public interface CountyRepository extends JpaRepository<County, Long> {
     @Query("SELECT c FROM County c WHERE c.name = :county AND c.state.name = :state")
     Optional<County> findByNameAndStateName(String county, String state);
 
-    @Query("SELECT c FROM County c WHERE c.name = :countyName AND c.state.name = :stateName")
-    Optional<County> findByCountyNameAndStateName(String countyName, String stateName);
+    @Query("SELECT c FROM County c " +
+            "WHERE LOWER(c.name) = LOWER(:county) AND LOWER(c.state.name) = LOWER(:state)")
+    Optional<County> findByCountyNameAndStateName(String county, String state);
 }
