@@ -6,7 +6,7 @@ import com.flexone.catchwiseserver.domain.MapMarker;
 import com.flexone.catchwiseserver.domain.MapMarkerType;
 import com.flexone.catchwiseserver.domain.WaterAccess;
 import com.flexone.catchwiseserver.service.LakeService;
-import com.flexone.catchwiseserver.service.MapMarkerService;
+import com.flexone.catchwiseserver.service.LocationService;
 import com.flexone.catchwiseserver.service.WaterAccessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Order(2)
+@Order(3)
 public class WaterAccessSeed implements CommandLineRunner {
     final static Path waterAccessPath = Paths.get("src", "main", "resources", "data", "water_access.geojson");
 
@@ -38,7 +38,7 @@ public class WaterAccessSeed implements CommandLineRunner {
     final static GeometryFactory geometryFactory = new GeometryFactory();
 
     final WaterAccessService waterAccessService;
-    final MapMarkerService mapMarkerService;
+    final LocationService locationService;
     final LakeService lakeService;
 
     @Value("${app.seed.enabled:false}")
@@ -57,11 +57,11 @@ public class WaterAccessSeed implements CommandLineRunner {
         List<WaterAccess> waterAccesses = new ArrayList<>();
 
         Arrays.stream(featureCollection.getFeatures()).forEach(feature -> {
-            MapMarkerType mapMarkerType = mapMarkerService.findTypeById(2);
+            MapMarkerType mapMarkerType = locationService.findTypeById(2);
             Point point = geometryFactory.createPoint(reader.read(feature.getGeometry()).getCoordinate());
             MapMarker marker = new MapMarker()
                     .setGeometry(point)
-                    .setType(mapMarkerType);
+                    .setType(mapMarkerType.getType());
 
             log.info(feature.getProperties().get("DOWLKNUM").toString());
 

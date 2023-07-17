@@ -7,12 +7,11 @@ import com.flexone.catchwiseserver.domain.Lake;
 import com.flexone.catchwiseserver.domain.MapMarker;
 import com.flexone.catchwiseserver.service.CountyService;
 import com.flexone.catchwiseserver.service.LakeService;
-import com.flexone.catchwiseserver.service.MapMarkerService;
+import com.flexone.catchwiseserver.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -28,7 +27,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@Order(1)
+@Order(2)
 public class LakesSeed implements CommandLineRunner {
 
     final static Path waterAccessPath = Paths.get("src", "main", "resources", "data", "NewAllLakes.json");
@@ -36,7 +35,7 @@ public class LakesSeed implements CommandLineRunner {
     final static GeometryFactory geometryFactory = new GeometryFactory();
     static final GeoJSONReader reader = new GeoJSONReader();
 
-    final MapMarkerService mapMarkerService;
+    final LocationService locationService;
     final LakeService lakeService;
     final CountyService countyService;
 
@@ -57,7 +56,7 @@ public class LakesSeed implements CommandLineRunner {
             if (lake != null) return;
             MapMarker marker = new MapMarker()
                     .setGeometry(geometryFactory.createPoint(new Coordinate(lakeJSON.getLng(), lakeJSON.getLat())))
-                    .setType(mapMarkerService.findTypeById(1));
+                    .setType(locationService.findTypeById(1).getType());
             lake = lakeService.findByMapMarker(marker);
             if (lake != null) return;
 

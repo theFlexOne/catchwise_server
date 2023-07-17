@@ -5,11 +5,9 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class LakeNameDTO {
+public class UserProfileDTO {
 
-    Long id;
-    String name;
-    String county;
-    String state;
+    private String username;
+    private String email;
 
 }

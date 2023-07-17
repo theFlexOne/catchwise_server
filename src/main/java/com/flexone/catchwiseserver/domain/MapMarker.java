@@ -10,28 +10,21 @@ import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 
-@Entity
-@Data
-@Table(name = "map_markers")
 @NoArgsConstructor
 @Accessors(chain = true)
+@Data
+@Entity
+@Table(name = "all_map_locations")
 public class MapMarker {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "location_name")
+    private String locationName;
+    @Column(name = "marker_type")
+    private String type;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "map_marker_type_id")
-    private MapMarkerType type = new MapMarkerType();
-
-    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
     @JsonSerialize(using = GeometrySerializer.class)
+    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "marker")
     private Point geometry;
-
-    public MapMarker(Long typeId, Point geometry) {
-        type.setId(typeId);
-        this.geometry = geometry;
-    }
-
 }

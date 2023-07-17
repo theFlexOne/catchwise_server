@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Order(1)
 public class StatesAndCountiesSeed implements CommandLineRunner {
 
     final static Path allCountiesPath = Paths.get("src", "main", "resources", "data", "all_counties.geojson");
@@ -42,7 +44,7 @@ public class StatesAndCountiesSeed implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (!seedEnabled) return;
-//        seed();
+        seed();
     }
 
     public void seed() throws IOException {
