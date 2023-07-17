@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/markers/**").permitAll()
+                .antMatchers("/location-names/**").permitAll()
                 .anyRequest().hasRole("USER")
                 .and()
                 .httpBasic();
