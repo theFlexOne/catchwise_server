@@ -1,10 +1,7 @@
-package com.flexone.catchwiseserver.config;
+package com.flexone.catchwiseserver.security;
 
 import com.flexone.catchwiseserver.service.UserService;
-import com.flexone.catchwiseserver.util.JwtAuthEntryPoint;
-import com.flexone.catchwiseserver.util.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final UserService userService;
-    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private final JWTAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,8 +34,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/markers/**").permitAll()
-                .antMatchers("/location-names/**").permitAll()
+                .antMatchers("/locations/**").permitAll()
                 .anyRequest().hasRole("USER")
                 .and()
                 .httpBasic();
@@ -58,7 +54,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+    public JWTAuthenticationFilter jwtAuthenticationFilter() {
+        return new JWTAuthenticationFilter();
     }
 }

@@ -12,6 +12,7 @@ public class LocationNameDTO {
 
     Long id;
     String name;
+    String type;
     String county;
     String state;
 
@@ -20,6 +21,7 @@ public class LocationNameDTO {
         return new LocationNameDTO()
                 .setId(locationName.getId())
                 .setName(locationName.getName())
+                .setType(locationName.getType())
                 .setCounty(locationName.getCounty())
                 .setState(locationName.getState());
     }

@@ -20,15 +20,4 @@ public class MapMarkerController {
 
     private final LocationService locationService;
 
-    @GetMapping
-    public ResponseEntity<List<MapMarkerDTO>> getAllLakeMarkers(
-            @RequestParam(value = "lng", required = false) Double lng,
-            @RequestParam(value = "lat", required = false) Double lat,
-            @RequestParam(value = "radius", required = false) Double radius
-    ) {
-        List<MapMarkerDTO> lakeDTOList = locationService.findAllMapMarkers(lng, lat, radius);
-        log.info("Returning " + lakeDTOList.size() + " lakes");
-        return ResponseEntity.ok(lakeDTOList);
-    }
-
 }

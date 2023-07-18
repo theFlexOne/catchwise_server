@@ -14,10 +14,12 @@ public class LocationName {
 
     @Id
     Long id;
-    @Column(name = "lake_name")
+    @Column(name = "name")
     String name;
-    @Column(name = "county_name")
+    @Column(name = "county")
     String county;
-    @Column(name = "state_name")
+    @Column(name = "state")
     String state;
+    @Column(name = "location_type")
+    String type;
 }

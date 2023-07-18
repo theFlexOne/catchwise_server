@@ -3,6 +3,7 @@ package com.flexone.catchwiseserver.service;
 import com.flexone.catchwiseserver.domain.LocationName;
 import com.flexone.catchwiseserver.domain.MapMarker;
 import com.flexone.catchwiseserver.domain.MapMarkerType;
+import com.flexone.catchwiseserver.dto.LocationNameDTO;
 import com.flexone.catchwiseserver.dto.MapMarkerDTO;
 import com.flexone.catchwiseserver.repository.LocationNameRepository;
 import com.flexone.catchwiseserver.repository.MapMarkerRepository;
@@ -36,12 +37,13 @@ public class LocationService {
     }
 
 
-        public List<LocationName> searchLocationNames(String query, Double lng, Double lat, Double radius) {
-            return locationNameRepository.searchLocationNames(query, lng, lat, radius);
-        }
+    public List<LocationName> searchLocationNames(String query, Double lng, Double lat, Double radius) {
+        return locationNameRepository.searchLocationNames(query, lng, lat, radius);
+    }
 
 
-    public List<LocationName> getAllLocationNames(Double lng, Double lat, Double radius) {
-        return locationNameRepository.findAllLocationNamesInRadius(lng, lat, radius);
+    public List<LocationNameDTO> getAllLocationNames(Double lng, Double lat, Double radius) {
+        List<LocationName> locationNames = locationNameRepository.findAllLocationNamesInRadius(lng, lat, radius);
+        return LocationNameDTO.from(locationNames);
     }
 }

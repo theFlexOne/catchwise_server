@@ -1,9 +1,10 @@
-package com.flexone.catchwiseserver.util;
+package com.flexone.catchwiseserver.security;
 
 import com.flexone.catchwiseserver.constants.SecurityConstants;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -11,15 +12,16 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 @Component
-public class JwtProvider {
+public class JWTProvider {
 
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
         Date currentDate = new Date();
-        Date expiryDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION_TIME);
+        Date expiryDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION_DURATION);
 
 
         return Jwts.builder()
@@ -44,6 +46,7 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            log.error(e.getMessage());
             throw new AuthenticationCredentialsNotFoundException("Invalid JWT token");
         }
     }

@@ -14,7 +14,7 @@ public interface LocationNameRepository extends JpaRepository<LocationName, Long
             nativeQuery = true)
     List<LocationName> findAllLakeNamesInRadius(Integer lng, Integer lat, Double radius);
 
-    @Query(value = "select id, name, county, state from location_names " +
+    @Query(value = "select id, name, county, state, location_type from location_names " +
             "where st_dwithin(marker, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), :radius) " +
             "order by ST_Distance(marker, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326));",
             nativeQuery = true)

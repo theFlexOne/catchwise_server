@@ -7,7 +7,7 @@ import com.flexone.catchwiseserver.dto.LoginRequestDTO;
 import com.flexone.catchwiseserver.dto.SignupDTO;
 import com.flexone.catchwiseserver.repository.RoleRepository;
 import com.flexone.catchwiseserver.repository.UserRepository;
-import com.flexone.catchwiseserver.util.JwtProvider;
+import com.flexone.catchwiseserver.security.JWTProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +28,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
+    private final JWTProvider jwtProvider;
 
 //    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login")

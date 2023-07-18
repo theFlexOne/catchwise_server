@@ -1,9 +1,9 @@
 package com.flexone.catchwiseserver.service;
 
 import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.LocationName;
 import com.flexone.catchwiseserver.domain.MapMarker;
-import com.flexone.catchwiseserver.dto.*;
+import com.flexone.catchwiseserver.dto.FishSpeciesDTO;
+import com.flexone.catchwiseserver.dto.LakeDTO;
 import com.flexone.catchwiseserver.repository.LocationNameRepository;
 import com.flexone.catchwiseserver.repository.LakeRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,12 @@ import java.util.List;
 @Slf4j
 public class LakeService {
 
+    // region DEPENDENCIES
     final LakeRepository lakeRepository;
     final LocationNameRepository locationNameRepository;
+    // endregion
+
+    // region FIND (SINGLE)
 
     public LakeDTO findById(Long id) throws Exception {
         Lake lake = lakeRepository.findById(id).orElseThrow(() -> new Exception("Lake not found"));
@@ -43,18 +47,12 @@ public class LakeService {
         return lakeRepository.findByLocalId(localLakeId).orElse(null);
     }
 
-
-    public List<LocationNameDTO> findLakeNames(Double lng, Double lat, Double radius) {
-        List<LocationName> locationNameList = locationNameRepository.findAllLakeNamesInRadius(lng.intValue(), lat.intValue(), radius);
-        return locationNameList.stream().map(locationName -> {
-            return new LocationNameDTO()
-                    .setId(locationName.getId())
-                    .setName(locationName.getName())
-                    .setCounty(locationName.getCounty())
-                    .setState(locationName.getState());
-        }).toList();
+    public Lake findByMapMarker(MapMarker marker) {
+        return lakeRepository.findByMapMarkerCoordinates(marker.getGeometry().getX(), marker.getGeometry().getY()).orElse(null);
     }
+    // endregion
 
+    // region SAVE
     public void save(Lake lake) {
         try {
 
@@ -64,8 +62,6 @@ public class LakeService {
             log.error(e.getMessage());
         }
     }
+    // endregion
 
-    public Lake findByMapMarker(MapMarker marker) {
-        return lakeRepository.findByMapMarkerCoordinates(marker.getGeometry().getX(), marker.getGeometry().getY()).orElse(null);
-    }
 }

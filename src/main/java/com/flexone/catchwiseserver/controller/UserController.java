@@ -3,7 +3,7 @@ package com.flexone.catchwiseserver.controller;
 import com.flexone.catchwiseserver.domain.UserEntity;
 import com.flexone.catchwiseserver.dto.UserProfileDTO;
 import com.flexone.catchwiseserver.repository.UserRepository;
-import com.flexone.catchwiseserver.util.JwtProvider;
+import com.flexone.catchwiseserver.security.JWTProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final JwtProvider jwtProvider;
+    private final JWTProvider jwtProvider;
     private final UserRepository userRepository;
 
     @GetMapping("/me")

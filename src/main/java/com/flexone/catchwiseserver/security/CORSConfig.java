@@ -1,4 +1,4 @@
-package com.flexone.catchwiseserver.config;
+package com.flexone.catchwiseserver.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
