@@ -47,8 +47,8 @@ public class LakeService {
         return lakeRepository.findByLocalId(localLakeId).orElse(null);
     }
 
-    public Lake findByMapMarker(Location marker) {
-        return lakeRepository.findByMapMarkerCoordinates(marker.getGeometry().getX(), marker.getGeometry().getY()).orElse(null);
+    public Lake findByLocation(Location location) {
+        return lakeRepository.findByCoordinates(location.getGeometry().getX(), location.getGeometry().getY()).orElse(null);
     }
     // endregion
 

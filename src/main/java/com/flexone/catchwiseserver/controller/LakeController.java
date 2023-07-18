@@ -1,7 +1,7 @@
 package com.flexone.catchwiseserver.controller;
 
 import com.flexone.catchwiseserver.dto.LakeDTO;
-import com.flexone.catchwiseserver.dto.MapMarkerDTO;
+import com.flexone.catchwiseserver.dto.LocationDTO;
 import com.flexone.catchwiseserver.service.FishSpeciesService;
 import com.flexone.catchwiseserver.service.LakeService;
 import com.flexone.catchwiseserver.security.JWTAuthenticationFilter;
@@ -24,7 +24,7 @@ public class LakeController {
     final JWTAuthenticationFilter jwtAuthFilter;
 
     @GetMapping
-    public ResponseEntity<List<MapMarkerDTO>> getAllLakes() {
+    public ResponseEntity<List<LocationDTO>> getAllLakes() {
         return null;
     }
 

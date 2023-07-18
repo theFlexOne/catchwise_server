@@ -49,27 +49,27 @@ public class LakesSeed implements CommandLineRunner {
         }
 
     private void seed() throws IOException {
-        List<LakeJSON> lakeJSONList = Arrays.asList(mapper.readValue(waterAccessPath.toFile(), LakeJSON[].class));
-        log.info(lakeJSONList.get(0).toString());
-        lakeJSONList.stream().forEach(lakeJSON -> {
-            Lake lake = lakeService.findByLocalId(lakeJSON.getId());
-            if (lake != null) return;
-            Location marker = new Location()
-                    .setGeometry(geometryFactory.createPoint(new Coordinate(lakeJSON.getLng(), lakeJSON.getLat())))
-                    .setType(locationService.findTypeById(1).getType());
-            lake = lakeService.findByMapMarker(marker);
-            if (lake != null) return;
-
-            County county = countyService.findByCountyNameAndStateName(lakeJSON.getCounty(), "Minnesota");
-
-            lake = new Lake()
-                    .setLocalId(lakeJSON.getId())
-                    .setName(lakeJSON.getName())
-                    .setMarker(marker)
-                    .setCounty(county)
-                    .setLocalId(lakeJSON.getId());
-            lakeService.save(lake);
-        });
+//        List<LakeJSON> lakeJSONList = Arrays.asList(mapper.readValue(waterAccessPath.toFile(), LakeJSON[].class));
+//        log.info(lakeJSONList.get(0).toString());
+//        lakeJSONList.stream().forEach(lakeJSON -> {
+//            Lake lake = lakeService.findByLocalId(lakeJSON.getId());
+//            if (lake != null) return;
+//            Location location = new Location()
+//                    .setGeometry(geometryFactory.createPoint(new Coordinate(lakeJSON.getLng(), lakeJSON.getLat())))
+//                    .setType(locationService.findTypeById(1).getType());
+//            lake = lakeService.findByLocation(location);
+//            if (lake != null) return;
+//
+//            County county = countyService.findByCountyNameAndStateName(lakeJSON.getCounty(), "Minnesota");
+//
+//            lake = new Lake()
+//                    .setLocalId(lakeJSON.getId())
+//                    .setName(lakeJSON.getName())
+//                    .setLocation(location)
+//                    .setCounty(county)
+//                    .setLocalId(lakeJSON.getId());
+//            lakeService.save(lake);
+//        });
     }
 
 

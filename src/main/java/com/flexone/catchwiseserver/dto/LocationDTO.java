@@ -8,24 +8,23 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class MapMarkerDTO {
+public class LocationDTO {
     Long id;
-    String locationName;
-    String markerType;
+    String type;
     Double[] coordinates = new Double[2];
 
     // region MAP TO DTO
-    public static MapMarkerDTO from(Location location) {
+    public static LocationDTO from(Location location) {
         Double[] coordinates = new Double[2];
         coordinates[0] = location.getGeometry().getCoordinate().getX();
         coordinates[1] = location.getGeometry().getCoordinate().getY();
-        return new MapMarkerDTO()
+        return new LocationDTO()
                 .setId(location.getId())
-                .setMarkerType(location.getType())
+                .setType(location.getType())
                 .setCoordinates(coordinates);
     }
-    public static List<MapMarkerDTO> from(List<Location> locations) {
-        return locations.stream().map(MapMarkerDTO::from).toList();
+    public static List<LocationDTO> from(List<Location> locations) {
+        return locations.stream().map(LocationDTO::from).toList();
     }
     // endregion
 }

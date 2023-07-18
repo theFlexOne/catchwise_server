@@ -19,6 +19,8 @@ public class Location {
 
     @Id
     private Long id;
+
+    @Column(name = "type")
     private String type;
 
     @JsonSerialize(using = GeometrySerializer.class)
