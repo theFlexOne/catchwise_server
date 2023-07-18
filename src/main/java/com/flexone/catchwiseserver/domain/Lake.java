@@ -43,12 +43,11 @@ public class Lake {
     private MultiPolygon geometry;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "map_marker_id", referencedColumnName = "id")
-    private MapMarker marker;
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 
     @OneToMany(mappedBy = "lake", cascade = CascadeType.MERGE)
     private List<WaterAccess> waterAccessList = new ArrayList<>();
-
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(name = "lakes_fish_species",
@@ -56,10 +55,6 @@ public class Lake {
             inverseJoinColumns = @JoinColumn(name = "fish_species_id"))
     @Column(name = "fish_species")
     private List<FishSpecies> fishSpecies = new ArrayList<>();
-
-    public Point getMarker() {
-        return marker.getGeometry();
-    }
 
     public Lake addFishSpecies(FishSpecies fishSpecies) {
         this.fishSpecies.add(fishSpecies);

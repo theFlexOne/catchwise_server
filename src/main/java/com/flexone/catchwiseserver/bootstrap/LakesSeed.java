@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flexone.catchwiseserver.bootstrap.json.LakesJSON.LakeJSON;
 import com.flexone.catchwiseserver.domain.County;
 import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.MapMarker;
+import com.flexone.catchwiseserver.domain.Location;
 import com.flexone.catchwiseserver.service.CountyService;
 import com.flexone.catchwiseserver.service.LakeService;
 import com.flexone.catchwiseserver.service.LocationService;
@@ -54,7 +54,7 @@ public class LakesSeed implements CommandLineRunner {
         lakeJSONList.stream().forEach(lakeJSON -> {
             Lake lake = lakeService.findByLocalId(lakeJSON.getId());
             if (lake != null) return;
-            MapMarker marker = new MapMarker()
+            Location marker = new Location()
                     .setGeometry(geometryFactory.createPoint(new Coordinate(lakeJSON.getLng(), lakeJSON.getLat())))
                     .setType(locationService.findTypeById(1).getType());
             lake = lakeService.findByMapMarker(marker);

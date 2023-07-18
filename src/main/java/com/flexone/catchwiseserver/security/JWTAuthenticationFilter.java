@@ -1,6 +1,6 @@
 package com.flexone.catchwiseserver.security;
 
-import com.flexone.catchwiseserver.service.UserService;
+import com.flexone.catchwiseserver.service.UserDetailsServiceImpl;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +21,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JWTProvider jwtProvider;
     @Autowired
-    private UserService userService;
+    private UserDetailsServiceImpl userService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,

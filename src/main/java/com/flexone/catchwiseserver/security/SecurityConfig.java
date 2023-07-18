@@ -1,6 +1,6 @@
 package com.flexone.catchwiseserver.security;
 
-import com.flexone.catchwiseserver.service.UserService;
+import com.flexone.catchwiseserver.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserService userService;
+    private final UserDetailsServiceImpl userService;
     private final JWTAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean

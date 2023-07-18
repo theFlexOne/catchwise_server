@@ -1,7 +1,7 @@
 package com.flexone.catchwiseserver.service;
 
 import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.MapMarker;
+import com.flexone.catchwiseserver.domain.Location;
 import com.flexone.catchwiseserver.dto.FishSpeciesDTO;
 import com.flexone.catchwiseserver.dto.LakeDTO;
 import com.flexone.catchwiseserver.repository.LocationNameRepository;
@@ -47,7 +47,7 @@ public class LakeService {
         return lakeRepository.findByLocalId(localLakeId).orElse(null);
     }
 
-    public Lake findByMapMarker(MapMarker marker) {
+    public Lake findByMapMarker(Location marker) {
         return lakeRepository.findByMapMarkerCoordinates(marker.getGeometry().getX(), marker.getGeometry().getY()).orElse(null);
     }
     // endregion

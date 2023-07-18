@@ -2,7 +2,7 @@ package com.flexone.catchwiseserver.bootstrap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.MapMarker;
+import com.flexone.catchwiseserver.domain.Location;
 import com.flexone.catchwiseserver.domain.MapMarkerType;
 import com.flexone.catchwiseserver.domain.WaterAccess;
 import com.flexone.catchwiseserver.service.LakeService;
@@ -59,7 +59,7 @@ public class WaterAccessSeed implements CommandLineRunner {
         Arrays.stream(featureCollection.getFeatures()).forEach(feature -> {
             MapMarkerType mapMarkerType = locationService.findTypeById(2);
             Point point = geometryFactory.createPoint(reader.read(feature.getGeometry()).getCoordinate());
-            MapMarker marker = new MapMarker()
+            Location marker = new Location()
                     .setGeometry(point)
                     .setType(mapMarkerType.getType());
 

@@ -42,13 +42,8 @@ public class WaterAccess {
     @JoinColumn(name = "lake_id", nullable = false)
     private Lake lake;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "map_marker_id", referencedColumnName = "id")
-    private MapMarker marker;
-
-    public Point getMarker() {
-        return marker.getGeometry();
-    }
-
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.ALL})
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 
 }

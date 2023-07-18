@@ -8,6 +8,8 @@ import com.flexone.catchwiseserver.dto.SignupDTO;
 import com.flexone.catchwiseserver.repository.RoleRepository;
 import com.flexone.catchwiseserver.repository.UserRepository;
 import com.flexone.catchwiseserver.security.JWTProvider;
+import com.flexone.catchwiseserver.service.UserDetailsServiceImpl;
+import com.flexone.catchwiseserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,50 +26,29 @@ import java.util.Collections;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JWTProvider jwtProvider;
+    private UserService userService;
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        UserEntity user = userRepository.findByUsername(loginRequestDTO.getUsername()).orElseThrow(() -> new RuntimeException("Username not found"));
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDTO.getUsername(),
-                        loginRequestDTO.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtProvider.generateToken(authentication);
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token);
-        loginResponseDTO.setUserProfileDTO(user.getUsername(), user.getEmail());
+        LoginResponseDTO loginResponseDTO = userService.login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
         return ResponseEntity.ok(loginResponseDTO);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestBody SignupDTO signupDTO) {
-        if (userRepository.existsByUsername(signupDTO.getUsername())) {
+        if (userService.existsByUsername(signupDTO.getUsername())) {
             return ResponseEntity.badRequest().body("Username is already taken");
         }
-        if (userRepository.existsByEmail(signupDTO.getEmail())) {
+        if (userService.existsByEmail(signupDTO.getEmail())) {
             return ResponseEntity.badRequest().body("Email is already taken");
         }
-
-        UserEntity user = new UserEntity();
-        user.setUsername(signupDTO.getUsername());
-        user.setEmail(signupDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
-        user.setRoles(roleRepository.findAll());
-
-        Role userRole = roleRepository.findByName("USER").orElseThrow();
-        user.setRoles(Collections.singletonList(userRole));
-
-        userRepository.save(user);
-
-        return ResponseEntity.ok("User registered successfully!");
+        try {
+            userService.signUp(signupDTO);
+            userService.login(signupDTO.getUsername(), signupDTO.getPassword());
+            return ResponseEntity.ok("User registered successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error while signing up");
+        }
     }
 
 }

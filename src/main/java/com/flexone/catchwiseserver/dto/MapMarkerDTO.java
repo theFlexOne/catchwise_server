@@ -1,6 +1,6 @@
 package com.flexone.catchwiseserver.dto;
 
-import com.flexone.catchwiseserver.domain.MapMarker;
+import com.flexone.catchwiseserver.domain.Location;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,17 +15,17 @@ public class MapMarkerDTO {
     Double[] coordinates = new Double[2];
 
     // region MAP TO DTO
-    public static MapMarkerDTO from(MapMarker mapMarker) {
+    public static MapMarkerDTO from(Location location) {
         Double[] coordinates = new Double[2];
-        coordinates[0] = mapMarker.getGeometry().getCoordinate().getX();
-        coordinates[1] = mapMarker.getGeometry().getCoordinate().getY();
+        coordinates[0] = location.getGeometry().getCoordinate().getX();
+        coordinates[1] = location.getGeometry().getCoordinate().getY();
         return new MapMarkerDTO()
-                .setId(mapMarker.getId())
-                .setMarkerType(mapMarker.getType())
+                .setId(location.getId())
+                .setMarkerType(location.getType())
                 .setCoordinates(coordinates);
     }
-    public static List<MapMarkerDTO> from(List<MapMarker> mapMarkers) {
-        return mapMarkers.stream().map(MapMarkerDTO::from).toList();
+    public static List<MapMarkerDTO> from(List<Location> locations) {
+        return locations.stream().map(MapMarkerDTO::from).toList();
     }
     // endregion
 }

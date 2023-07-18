@@ -1,7 +1,7 @@
 package com.flexone.catchwiseserver.service;
 
 import com.flexone.catchwiseserver.domain.LocationName;
-import com.flexone.catchwiseserver.domain.MapMarker;
+import com.flexone.catchwiseserver.domain.Location;
 import com.flexone.catchwiseserver.domain.MapMarkerType;
 import com.flexone.catchwiseserver.dto.LocationNameDTO;
 import com.flexone.catchwiseserver.dto.MapMarkerDTO;
@@ -32,8 +32,8 @@ public class LocationService {
 
     public List<MapMarkerDTO> findAllMapMarkers(Double lng, Double lat, Double radius) {
         radius = radius == null ? DEFAULT_RADIUS : radius;
-        List<MapMarker> mapMarkers = mapMarkerRepository.findAllMarkersInRadius(lng.intValue(), lat.intValue(), radius);
-        return MapMarkerDTO.from(mapMarkers);
+        List<Location> locations = mapMarkerRepository.findAllMarkersInRadius(lng.intValue(), lat.intValue(), radius);
+        return MapMarkerDTO.from(locations);
     }
 
 

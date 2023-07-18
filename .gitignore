@@ -33,5 +33,6 @@ build/
 .vscode/
 src/main/resources/data/
 src/main/resources/db/
+src/main/resources/temp/
 
 .env

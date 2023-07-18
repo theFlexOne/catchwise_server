@@ -14,17 +14,14 @@ import javax.persistence.*;
 @Accessors(chain = true)
 @Data
 @Entity
-@Table(name = "all_map_locations")
-public class MapMarker {
+@Table(name = "locations")
+public class Location {
 
     @Id
     private Long id;
-    @Column(name = "location_name")
-    private String locationName;
-    @Column(name = "marker_type")
     private String type;
 
     @JsonSerialize(using = GeometrySerializer.class)
-    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "marker")
+    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "geom")
     private Point geometry;
 }
