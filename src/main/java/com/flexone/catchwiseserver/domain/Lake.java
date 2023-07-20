@@ -42,9 +42,9 @@ public class Lake {
     @JsonSerialize(using = GeometrySerializer.class)
     private MultiPolygon geometry;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location location;
+    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "map_marker")
+    @JsonSerialize(using = GeometrySerializer.class)
+    private Point mapMarker;
 
     @OneToMany(mappedBy = "lake", cascade = CascadeType.MERGE)
     private List<WaterAccess> waterAccessList = new ArrayList<>();

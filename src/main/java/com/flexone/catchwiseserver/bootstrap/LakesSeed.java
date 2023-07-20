@@ -1,16 +1,10 @@
 package com.flexone.catchwiseserver.bootstrap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flexone.catchwiseserver.bootstrap.json.LakesJSON.LakeJSON;
-import com.flexone.catchwiseserver.domain.County;
-import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.Location;
 import com.flexone.catchwiseserver.service.CountyService;
 import com.flexone.catchwiseserver.service.LakeService;
-import com.flexone.catchwiseserver.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -21,8 +15,6 @@ import org.wololo.jts2geojson.GeoJSONReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +27,6 @@ public class LakesSeed implements CommandLineRunner {
     final static GeometryFactory geometryFactory = new GeometryFactory();
     static final GeoJSONReader reader = new GeoJSONReader();
 
-    final LocationService locationService;
     final LakeService lakeService;
     final CountyService countyService;
 

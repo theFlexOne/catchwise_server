@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
-                .antMatchers("/locations/**").permitAll()
+                .antMatchers("/map/**").permitAll()
                 .anyRequest().hasRole("USER")
                 .and()
                 .httpBasic();

@@ -74,7 +74,16 @@ order by km_from_point asc;
 
 select * from get_locations_near_point(-94.3368, 46.2360);
 
+delete from v2.water_accesses wa
+where wa.id in (
+    select wa.id from v2.water_accesses wa
+    left join v2.lakes l on l.id = wa.lake_id
+    where l.id is null
+);
 
+
+
+select * from lakes where id = 2482;
 
 
 

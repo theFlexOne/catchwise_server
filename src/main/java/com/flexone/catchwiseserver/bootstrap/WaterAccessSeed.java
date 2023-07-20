@@ -1,30 +1,19 @@
 package com.flexone.catchwiseserver.bootstrap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.Location;
-import com.flexone.catchwiseserver.domain.MapMarkerType;
-import com.flexone.catchwiseserver.domain.WaterAccess;
 import com.flexone.catchwiseserver.service.LakeService;
-import com.flexone.catchwiseserver.service.LocationService;
 import com.flexone.catchwiseserver.service.WaterAccessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.wololo.geojson.FeatureCollection;
 import org.wololo.jts2geojson.GeoJSONReader;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +27,6 @@ public class WaterAccessSeed implements CommandLineRunner {
     final static GeometryFactory geometryFactory = new GeometryFactory();
 
     final WaterAccessService waterAccessService;
-    final LocationService locationService;
     final LakeService lakeService;
 
     @Value("${app.seed.enabled:false}")
@@ -57,7 +45,7 @@ public class WaterAccessSeed implements CommandLineRunner {
 //        List<WaterAccess> waterAccesses = new ArrayList<>();
 //
 //        Arrays.stream(featureCollection.getFeatures()).forEach(feature -> {
-//            MapMarkerType mapMarkerType = locationService.findTypeById(2);
+//            MapMarkerView mapMarkerType = locationService.findTypeById(2);
 //            Point point = geometryFactory.createPoint(reader.read(feature.getGeometry()).getCoordinate());
 //            Location location = new Location()
 //                    .setGeometry(point)

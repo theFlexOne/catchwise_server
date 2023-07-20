@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/data/
-src/main/resources/db/
+src/main/resources/db/temp/
 src/main/resources/temp/
 
 .env

@@ -1,6 +1,8 @@
 package com.flexone.catchwiseserver.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.flexone.catchwiseserver.serializer.GeometrySerializer;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -42,8 +44,8 @@ public class WaterAccess {
     @JoinColumn(name = "lake_id", nullable = false)
     private Lake lake;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.ALL})
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location location;
+    @Column(columnDefinition = "GEOMETRY(POINT, 4326)", name = "map_marker")
+    @JsonSerialize(using = GeometrySerializer.class)
+    private Point mapMarker;
 
 }

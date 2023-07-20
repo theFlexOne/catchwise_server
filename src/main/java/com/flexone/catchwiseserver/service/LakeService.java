@@ -1,10 +1,8 @@
 package com.flexone.catchwiseserver.service;
 
 import com.flexone.catchwiseserver.domain.Lake;
-import com.flexone.catchwiseserver.domain.Location;
 import com.flexone.catchwiseserver.dto.FishSpeciesDTO;
 import com.flexone.catchwiseserver.dto.LakeDTO;
-import com.flexone.catchwiseserver.repository.LocationNameRepository;
 import com.flexone.catchwiseserver.repository.LakeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,6 @@ public class LakeService {
 
     // region DEPENDENCIES
     final LakeRepository lakeRepository;
-    final LocationNameRepository locationNameRepository;
     // endregion
 
     // region FIND (SINGLE)
@@ -47,9 +44,6 @@ public class LakeService {
         return lakeRepository.findByLocalId(localLakeId).orElse(null);
     }
 
-    public Lake findByLocation(Location location) {
-        return lakeRepository.findByCoordinates(location.getGeometry().getX(), location.getGeometry().getY()).orElse(null);
-    }
     // endregion
 
     // region SAVE
