@@ -22,14 +22,32 @@ public class MapMarkerService {
         try{
 
         if (fieldsList.contains("all")) {
-            markers.addAll(mapMarkerRepository.getLakesMapMarkers(lng, lat, radius).get());
-            markers.addAll(mapMarkerRepository.getWaterAccessMapMarkers(lng, lat, radius).get());
+            markers.addAll(mapMarkerRepository.getMapMarkers("lakes", lng, lat, radius).get());
+            markers.addAll(mapMarkerRepository.getMapMarkers("water_accesses", lng, lat, radius).get());
         } else {
+            markers.addAll(fieldsList.stream().reduce(new ArrayList<>(), (acc, field) -> {
+                try {
+                    switch (field) {
+                        case "lake":
+                            acc.addAll(mapMarkerRepository.getMapMarkers("lakes", lng, lat, radius).get());
+                            break;
+                        case "water_access":
+                            acc.addAll(mapMarkerRepository.getMapMarkers("water_accesses", lng, lat, radius).get());
+                            break;
+                    }
+                    return acc;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }, (acc1, acc2) -> {
+                acc1.addAll(acc2);
+                return acc1;
+            }));
             if (fieldsList.contains("lake")) {
-                markers.addAll(mapMarkerRepository.getLakesMapMarkers(lng, lat, radius).get());
+                markers.addAll(mapMarkerRepository.getMapMarkers("lakes", lng, lat, radius).get());
             }
             if (fieldsList.contains("water_access")) {
-                markers.addAll(mapMarkerRepository.getWaterAccessMapMarkers(lng, lat, radius).get());
+                markers.addAll(mapMarkerRepository.getMapMarkers("water_accesses", lng, lat, radius).get());
             }
         }
         } catch (Exception e) {

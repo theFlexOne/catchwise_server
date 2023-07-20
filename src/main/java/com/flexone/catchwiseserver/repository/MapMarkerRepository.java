@@ -19,4 +19,10 @@ public interface MapMarkerRepository extends JpaRepository<MapMarker, Long> {
             nativeQuery = true)
     CompletableFuture<List<MapMarker>> getWaterAccessMapMarkers(Double lng, Double lat, Double radius);
 
+
+    @Query(value = "SELECT * FROM map_markers(:type) " +
+            "WHERE ST_DWithin(geom, ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), :radius)",
+            nativeQuery = true)
+    CompletableFuture<List<MapMarker>> getMapMarkers(String type, Double lng, Double lat, Double radius);
+
 }
