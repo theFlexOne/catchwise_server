@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsServiceImpl userService;
+    private final UserDetailsServiceImpl userDetailsService;
     private final JWTAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/map/**").permitAll()
                 .anyRequest().hasRole("USER")
+                .and()
+                .logout().logoutUrl("/auth/logout")
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
