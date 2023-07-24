@@ -8,6 +8,7 @@ import com.flexone.catchwiseserver.repository.RoleRepository;
 import com.flexone.catchwiseserver.repository.UserRepository;
 import com.flexone.catchwiseserver.security.JWTProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,33 +30,28 @@ public class UserService {
 
 
 
-    public void signUp(SignupDTO signupDTO) {
+    public LoginResponseDTO signUp(SignupDTO signupDTO) {
         UserEntity user = new UserEntity();
-        user.setUsername(signupDTO.getUsername());
         user.setEmail(signupDTO.getEmail());
         user.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
         user.setRoles(roleRepository.findAll());
 
         Role userRole = roleRepository.findByName("USER").orElseThrow();
         user.setRoles(Collections.singletonList(userRole));
-
         userRepository.save(user);
+        return login(signupDTO.getEmail(), signupDTO.getPassword());
     }
 
-    public LoginResponseDTO login(String username, String password) {
-        UserEntity user = userRepository.findByUsername(username).orElseThrow();
+    public LoginResponseDTO login(String email, String password) {
+        UserEntity user = userRepository.findByEmail(email).orElseThrow();
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
+                new UsernamePasswordAuthenticationToken(email, password)
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtProvider.generateToken(authentication);
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token);
-        loginResponseDTO.setUserProfileDTO(user.getUsername(), user.getEmail());
+        loginResponseDTO.setEmail(user.getEmail());
         return loginResponseDTO;
-    }
-
-    public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
     }
 
     public boolean existsByEmail(String email) {

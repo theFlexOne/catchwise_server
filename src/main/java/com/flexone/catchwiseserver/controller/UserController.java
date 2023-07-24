@@ -25,10 +25,9 @@ public class UserController {
     ) {
         String token = authorizationHeader.substring(7);
         String username = jwtProvider.getUsernameFromJwt(token);
-        UserEntity user = userRepository.findByUsername(username)
+        UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(new UserProfileDTO()
-                .setUsername(user.getUsername())
                 .setEmail(user.getEmail()));
 
     }

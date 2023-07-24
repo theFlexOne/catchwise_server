@@ -35,11 +35,15 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/map/**").permitAll()
+                .antMatchers("/weather/**").permitAll()
                 .anyRequest().hasRole("USER")
                 .and()
-                .logout().logoutUrl("/auth/logout")
+                .httpBasic()
                 .and()
-                .httpBasic();
+                .logout()
+                .logoutUrl("/auth/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

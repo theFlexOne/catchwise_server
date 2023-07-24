@@ -17,11 +17,9 @@ public class LoginResponseDTO {
         this.accessToken = accessToken;
     }
 
-    public LoginResponseDTO setUserProfileDTO(String username, String email) {
-        this.userProfile.setUsername(username);
+    public LoginResponseDTO setEmail(String email) {
         this.userProfile.setEmail(email);
         return this;
     }
-
 
 }

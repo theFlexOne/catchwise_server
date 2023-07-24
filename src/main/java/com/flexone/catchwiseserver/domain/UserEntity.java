@@ -18,7 +18,6 @@ public class UserEntity {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-        private String username;
         private String email;
         @Column(name = "password_digest")
         @JsonIgnore

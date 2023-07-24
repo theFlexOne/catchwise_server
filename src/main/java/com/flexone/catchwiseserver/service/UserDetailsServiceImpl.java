@@ -26,9 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        UserEntity user = userRepository.findByUsername(username)
+        UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new User(user.getUsername(), user.getPassword(), getAuthorities(user.getRoles()));
+        return new User(user.getEmail(), user.getPassword(), getAuthorities(user.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(List<Role> roles) {

@@ -11,6 +11,7 @@ import com.flexone.catchwiseserver.security.JWTProvider;
 import com.flexone.catchwiseserver.service.UserDetailsServiceImpl;
 import com.flexone.catchwiseserver.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,8 +26,10 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
-    private UserService userService;
+
+    final private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
@@ -35,18 +38,18 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody SignupDTO signupDTO) {
-        if (userService.existsByUsername(signupDTO.getUsername())) {
-            return ResponseEntity.badRequest().body("Username is already taken");
+    public ResponseEntity<?> signUp(@RequestBody SignupDTO signupDTO) {
+        if (userService.existsByEmail(signupDTO.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already taken");
         }
         if (userService.existsByEmail(signupDTO.getEmail())) {
             return ResponseEntity.badRequest().body("Email is already taken");
         }
         try {
-            userService.signUp(signupDTO);
-            userService.login(signupDTO.getUsername(), signupDTO.getPassword());
-            return ResponseEntity.ok("User registered successfully!");
+            LoginResponseDTO responseDTO = userService.signUp(signupDTO);
+            return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
+            log.error("Error while signing up", e);
             return ResponseEntity.badRequest().body("Error while signing up");
         }
     }
