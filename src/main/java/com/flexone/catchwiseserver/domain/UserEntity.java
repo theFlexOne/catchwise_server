@@ -18,12 +18,19 @@ public class UserEntity {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+
+        @Column(name = "email", unique = true, nullable = false)
         private String email;
-        @Column(name = "password_digest")
+
         @JsonIgnore
+        @Column(name = "password_digest", nullable = false)
         private String password;
 
-        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+        @JsonIgnore
+        @Column(name = "session_token", unique = true)
+        private String sessionToken;
+
+        @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
         @JoinTable(name = "users_roles",
                 joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
                 inverseJoinColumns = @JoinColumn(name= "role_id", referencedColumnName = "id"))

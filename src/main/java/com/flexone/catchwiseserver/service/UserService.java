@@ -8,6 +8,7 @@ import com.flexone.catchwiseserver.repository.RoleRepository;
 import com.flexone.catchwiseserver.repository.UserRepository;
 import com.flexone.catchwiseserver.security.JWTProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +17,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
@@ -31,24 +35,31 @@ public class UserService {
 
 
     public LoginResponseDTO signUp(SignupDTO signupDTO) {
+        Role userRole = roleRepository.findByName("USER").orElseThrow();
+
         UserEntity user = new UserEntity();
+
         user.setEmail(signupDTO.getEmail());
         user.setPassword(passwordEncoder.encode(signupDTO.getPassword()));
-        user.setRoles(roleRepository.findAll());
-
-        Role userRole = roleRepository.findByName("USER").orElseThrow();
         user.setRoles(Collections.singletonList(userRole));
-        userRepository.save(user);
-        return login(signupDTO.getEmail(), signupDTO.getPassword());
+
+        return login(user);
     }
 
     public LoginResponseDTO login(String email, String password) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow();
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtProvider.generateToken(authentication);
+        UserEntity user = userRepository.findByEmail(email).orElse(null);
+        return login(user);
+    }
+
+    public LoginResponseDTO login(UserEntity user) {
+        log.info("User found: {}", user);
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        String token = jwtProvider.generateToken(authenticationToken);
+        log.info("Token generated: {}", token);
+        user.setSessionToken(token);
+        userRepository.save(user);
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token);
         loginResponseDTO.setEmail(user.getEmail());
         return loginResponseDTO;
@@ -57,4 +68,16 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public List<String> fetchAllUserTokens() {
+        List<UserEntity> users = userRepository.findAll();
+        return users.stream().reduce(new ArrayList<>(), (acc, user) -> {
+            if (user.getSessionToken() != null)  acc.add(user.getSessionToken());
+            return acc;
+        }, (acc1, acc2) -> {
+            acc1.addAll(acc2);
+            return acc1;
+        });
+    }
+
 }

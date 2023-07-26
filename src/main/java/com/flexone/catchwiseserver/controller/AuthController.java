@@ -19,7 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 
 
@@ -32,8 +34,9 @@ public class AuthController {
     final private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        LoginResponseDTO loginResponseDTO = userService.login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO, WebRequest request) {
+        log.info("Request: {}", request);
+        LoginResponseDTO loginResponseDTO = userService.login(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
         return ResponseEntity.ok(loginResponseDTO);
     }
 
@@ -52,6 +55,12 @@ public class AuthController {
             log.error("Error while signing up", e);
             return ResponseEntity.badRequest().body("Error while signing up");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out");
     }
 
 }
